@@ -7,7 +7,7 @@ SOURCES = $(shell find . -regex '.*/[^.\#]+\.xml' )
 
 #all: $(addsuffix .html,$(basename $(SOURCES)))
 all:
-	xsltproc htmlgen.xslt
+	xsltproc htmlgen.xslt masterindex.xml
 
 test:
 	@echo sources = $(SOURCES)
