@@ -30,12 +30,14 @@ function YesNo() {
 }
 
 
-
+# show git status
+git status
+# check for changed files
 if git diff-index --quiet HEAD --; then
     echo "No uncommitted changes."
 elif YesNo "Commit changes?"; then
     read -p "Enter commit message: " message
-    git commit -m "$message"
+    git commit -a -m "$message"
 fi
 
 if YesNo "Push changes?"; then
