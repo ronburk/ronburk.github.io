@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<Xml>
+<title>
+    Stumbling Around V8
+</title>
+<body>
+    <p>
+        V8 is Google's
+        JavaScript engine.
+        It is notably used inside of Google's Chrome
+        web browser, Node.js, and Electron.
+    </p>
+    <p>
+        As an open-source C++ library,
+        V8 could theoretically be used by any
+        C++ programming project that wants to embed
+        a JavaScript interpreter.
+        In practice, however, using V8 is pretty
+        non-trivial.
+        The documentation is, to be charitable,
+        sparse.
+        These pages record my efforts to understand
+        V8.
+        Feel free to 
+
+    </p>
+</body>
+</Xml>
+
