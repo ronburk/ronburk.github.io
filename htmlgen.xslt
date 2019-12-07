@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-15"?>
 <xsl:stylesheet version="1.1"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+          xmlns:func="http://exslt.org/functions"
+          extension-element-prefixes="func"
     >
 <!--
    - htmlgen.xslt - read index file and generate ALL HTML files!
@@ -78,8 +80,74 @@
     }
 </xsl:variable>
 
+<!-- GetPath: return full path associated with this node.
+  -->
+<func:function name="func:GetPath">
+    <xsl:param name="node" select="."/>
 
-<!-- GenHTML: generate output HTML file for a given XML input file. -->
+    <xsl:choose>
+    <xsl:when test="name($node/..)='Index'">
+        <func:result
+            select="concat(func:GetPath($node/..),$node/@href,'/')"
+        />
+    </xsl:when>
+    <xsl:otherwise>
+        <func:result select="'/'"/>
+    </xsl:otherwise>
+    </xsl:choose>
+</func:function>
+
+<!-- MasterIndex: make copy of input masterindex, annotated for us.
+   -
+  -->
+<xsl:variable name="MasterIndex">
+    <xsl:apply-templates mode="annotate"/>
+</xsl:variable>
+<xsl:template match="Index|Entry" mode="annotate">
+    <xsl:variable name="Path" select="func:GetPath(.)"/>
+    <xsl:variable name="PathTrim"
+        select="substring($Path,1,string-length($Path)-1)"
+        />
+    <xsl:copy>
+        <xsl:choose>
+            <xsl:when test="name()='Index'">
+                <xsl:attribute name="input">
+                    <xsl:value-of
+                        select="concat('.',$Path,'index.xml')"/>
+                </xsl:attribute>
+                <xsl:attribute name="output">
+                    <xsl:value-of
+                        select="concat('.',$Path,'index.html')"/>
+                </xsl:attribute>
+                <xsl:attribute name="abs">
+                    <xsl:value-of
+                        select="concat($Path,'index.html')"/>
+                </xsl:attribute>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:attribute name="input">
+                    <xsl:value-of
+                        select="concat('.',$PathTrim,'.xml')"/>
+                </xsl:attribute>
+                <xsl:attribute name="output">
+                    <xsl:value-of
+                        select="concat('.',$PathTrim,'.html')"/>
+                </xsl:attribute>
+                <xsl:attribute name="abs">
+                    <xsl:value-of
+                        select="concat($PathTrim,'.html')"/>
+                </xsl:attribute>
+            </xsl:otherwise>
+        </xsl:choose>
+        <xsl:copy-of select="@*" />
+        <xsl:apply-templates mode="annotate"/>
+    </xsl:copy>
+</xsl:template>
+
+<!-- GenHTML: generate output HTML file for a given XML input file.
+   -
+   - Note that current node is the one in masterindex.xml.
+ -->
 <xsl:template name="GenHTML">
     <xsl:param name="XmlFile"/>
     <xsl:param name="HTMLFile"/>
@@ -87,8 +155,24 @@
     <xsl:message>
         <xsl:value-of
         select="concat('GenHTML ',$XmlFile, ' ', $HTMLFile)"/>
+        <xsl:value-of
+        select="concat('    UP= ',func:GetPath())"/>
     </xsl:message>
     
+    <!-- UP is parent node, or empty if we are the topmost node. -->
+    <xsl:variable name="UP" select=".."/>
+    <xsl:choose>
+    <xsl:when test="name(..)='Index'">
+        <xsl:message> UP is present</xsl:message>
+    </xsl:when>
+    <xsl:otherwise>
+        <xsl:message> UP is not present</xsl:message>
+    </xsl:otherwise>
+    </xsl:choose>
+
+    <xsl:variable name="NEXT" />
+    
+    <!-- create output HTML file here -->
     <xsl:document href="{$HTMLFile}" method="html">
         <html>
         <head>
@@ -105,6 +189,18 @@
                 <main class="main">
                     <xsl:apply-templates
                         select="document($XmlFile)/Xml/body/*"/>
+                    <xsl:if test="@href">
+                        <xsl:for-each select="*">
+                            <xsl:variable name="Title"
+                                select="document(@href)/Xml/head/title"
+                                          />
+                            <p>
+                                <a href="{func:GetPath(.)}">
+                                    <xsl:value-of select="$Title"/>
+                                </a>
+                            </p>
+                        </xsl:for-each>
+                    </xsl:if>
                 </main>
                 <footer class="footer"></footer>
             </div>
@@ -133,7 +229,7 @@
         </xsl:message>
         <xsl:choose>
         <xsl:when test="name(.)='Index'">
-            <xsl:call-template name="DoDir" select=".">
+            <xsl:call-template name="DoDir">
                 <xsl:with-param name="ParentPath" select="$Path"/>
             </xsl:call-template>
         </xsl:when>
@@ -152,8 +248,11 @@
 </xsl:template>
 
 <xsl:template match="/">
+ <xsl:copy-of select="$MasterIndex"/>
+
+    <!-- should only be one (outer) "Index" -->
     <xsl:for-each select="/Index">
-        <xsl:call-template name="DoDir" select=".">
+        <xsl:call-template name="DoDir">
             <xsl:with-param name="ParentPath" select="@href"/>
         </xsl:call-template>
     </xsl:for-each>

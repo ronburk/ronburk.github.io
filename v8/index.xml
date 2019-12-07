@@ -1,8 +1,10 @@
 <?xml version="1.0" ?>
 <Xml>
-<title>
-    Stumbling Around V8
-</title>
+<head>
+    <title>
+        Stumbling Around V8
+    </title>
+</head>
 <body>
     <p>
         V8 is Google's

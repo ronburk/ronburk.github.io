@@ -1,0 +1,101 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style>
+    /* Simple dashboard grid CSS */
+
+    /* Assign grid instructions to our parent grid container */
+    .grid-container {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      grid-template-rows: 50px 1fr 50px;
+      grid-template-areas:
+        "sidenav header"
+        "sidenav main"
+        "sidenav footer";
+      height: 100vh;
+    }
+
+    /* Give every child element its grid name */
+    .header {
+      grid-area: header;
+      background-color: #648ca6;
+    }
+
+    .sidenav {
+      grid-area: sidenav;
+      background-color: #394263;
+    }
+
+    .main {
+      grid-area: main;
+      background-color: #8fd4d9;
+    }
+
+    .footer {
+      grid-area: footer;
+      background-color: #648ca6;
+    }
+
+  .sidenav {
+    display: flex; /* Will be hidden on mobile */
+    flex-direction: column;
+    grid-area: sidenav;
+    background-color: #394263;
+  }
+  .sidenav__list {
+    padding: 0;
+    margin-top: 85px;
+    list-style-type: none;
+  }
+  .sidenav__list-item {
+    padding: 20px 20px 20px 40px;
+    color: #ddd;
+  }
+  .sidenav__list-item:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+  }
+
+
+  .header, .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    background-color: #648ca6;
+  }
+</style>
+</head>
+<body><div class="grid-container">
+<header class="header"></header><aside class="sidenav"></aside><main class="main"><p>
+        I like to avoid threads, so I naively hoped that
+        V8 did not require them.
+        But V8 does require threads
+        (uses
+        <a href="http://man7.org/linux/man-pages/man7/pthreads.7.html">pthreads</a>
+        to be specific),
+        so your V8 application will be multi-threaded.
+        You get some control over how many "extra" threads are started,
+        but it can't be zeo.
+        See <a href="https://stackoverflow.com/questions/56118604/wanting-to-understand-purpose-and-count-of-v8s-workerthreads">this StackOverflow question</a>.
+    </p>
+<p>
+        To be clear, <a href="https://www.ecma-international.org/ecma-262/5.1/">ECMAScript</a> is single-threaded,
+        so V8's implementation of that language
+        is likely to always be as well.
+        As <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop">this overview</a> implies,
+        combining a single-threaded interpreted language
+        with the ability to hand off I/O bound tasks to the external
+        environment is a good compromise.
+        The vague idea that JavaScript is "missing" threads is
+        misplaced.
+        If JavaScript had threads, node.js would never have
+        gotten off the ground.
+        Protecting the masses of programmers from multi-threading
+        is more important than protecting them from memory management.
+        As Gordon Bell warns,
+        <a href="https://tinyurl.com/BellOnThreads">Parallelism is more difficult to implement than anyone imagines</a>.
+    </p></main><footer class="footer"></footer>
+</div></body>
+</html>
