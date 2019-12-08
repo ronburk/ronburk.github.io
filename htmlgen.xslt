@@ -2,10 +2,23 @@
 <xsl:stylesheet version="1.1"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
           xmlns:func="http://exslt.org/functions"
-          extension-element-prefixes="func"
+          xmlns:exsl="http://exslt.org/common"
+          extension-element-prefixes="func exsl"
     >
 <!--
    - htmlgen.xslt - read index file and generate ALL HTML files!
+   -
+   - You must maintain "masterindex.xml", which is a simple XML
+   - representation of the complete set of XML files we will xform
+   - into HTML.
+   -
+   - Inside the global variable $MasterIndex, we create a copy of
+   - the "masterindex.xml" file in which we have added some information
+   - for convenience.
+   - 
+   - Finally, we make a pass over $MasterIndex to locate each XML
+   - file and create its matching .html file.
+   - 
   -->
 
 <xsl:output encoding="ISO-8859-15"/>
@@ -103,6 +116,8 @@
 <xsl:variable name="MasterIndex">
     <xsl:apply-templates mode="annotate"/>
 </xsl:variable>
+<!-- add some convenient attributes to Index and Entry elements.
+  -->
 <xsl:template match="Index|Entry" mode="annotate">
     <xsl:variable name="Path" select="func:GetPath(.)"/>
     <xsl:variable name="PathTrim"
@@ -173,7 +188,7 @@
     <xsl:variable name="NEXT" />
     
     <!-- create output HTML file here -->
-    <xsl:document href="{$HTMLFile}" method="html">
+    <xsl:document href="{@output}" method="html">
         <html>
         <head>
         <style>
@@ -184,15 +199,18 @@
         </head>
         <body>
             <div class="grid-container">
-                <header class="header"></header>
+                <header class="header">
+                    <xsl:apply-templates
+                        select="document(@input)/Xml/head/title/node()"/>
+                </header>
                 <aside class="sidenav"></aside>
                 <main class="main">
                     <xsl:apply-templates
-                        select="document($XmlFile)/Xml/body/*"/>
+                        select="document(@input)/Xml/body/*"/>
                     <xsl:if test="@href">
                         <xsl:for-each select="*">
                             <xsl:variable name="Title"
-                                select="document(@href)/Xml/head/title"
+                                select="document(@input)/Xml/head/title"
                                           />
                             <p>
                                 <a href="{func:GetPath(.)}">
@@ -214,7 +232,7 @@
     <xsl:param name="ParentPath"/>
 
     <xsl:message>
-        <xsl:value-of select="concat('DoNode ',$ParentPath)"/>
+        <xsl:value-of select="concat('DoDir ',$ParentPath)"/>
     </xsl:message>
 
     <!-- generate HTML for this directory's XML file -->
@@ -251,7 +269,7 @@
  <xsl:copy-of select="$MasterIndex"/>
 
     <!-- should only be one (outer) "Index" -->
-    <xsl:for-each select="/Index">
+    <xsl:for-each select="exsl:node-set($MasterIndex)/Index">
         <xsl:call-template name="DoDir">
             <xsl:with-param name="ParentPath" select="@href"/>
         </xsl:call-template>
