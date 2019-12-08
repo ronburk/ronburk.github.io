@@ -67,10 +67,21 @@
   }
 </style>
 </head>
-<body><div class="grid-container">
+<body>
+<div class="grid-container">
 <header class="header">
         Stumbling Around V8
-    </header><aside class="sidenav"></aside><main class="main"><p>
+    </header><aside class="sidenav"><ul id="menutree">
+<li><a href="#">Ron Burk github pages</a></li>
+    <ul id="menutree">
+<li><a href="#">
+        Stumbling Around V8
+    </a></li>
+        <li><a href="#">
+        V8 Single-Threaded and Multi-Threaded
+    </a></li>
+    </ul>
+</ul></aside><main class="main"><p>
         V8 is Google's
         JavaScript engine.
         It is notably used inside of Google's Chrome
@@ -87,11 +98,16 @@
         sparse.
         These pages record my efforts to understand
         V8.
-        Feel free to 
-
+        Feel free to let me know what-all I've gotten
+        wrong.
+        I guess you could do it in the form of an "issue" over
+        <a href="https://github.com/ronburk/ronburk.github.io/issues">here</a>
+        and that way it would only consume my attention if I'm
+        still alive and using github at all.
     </p>
 <p><a href="/v8/threads/">
         V8 Single-Threaded and Multi-Threaded
     </a></p></main><footer class="footer"></footer>
-</div></body>
+</div>
+</body>
 </html>

@@ -67,10 +67,21 @@
   }
 </style>
 </head>
-<body><div class="grid-container">
+<body>
+<div class="grid-container">
 <header class="header">
         V8 Single-Threaded and Multi-Threaded
-    </header><aside class="sidenav"></aside><main class="main"><p>
+    </header><aside class="sidenav"><ul id="menutree">
+<li><a href="#">Ron Burk github pages</a></li>
+    <ul id="menutree">
+<li><a href="#">
+        Stumbling Around V8
+    </a></li>
+        <li><a href="#">
+        V8 Single-Threaded and Multi-Threaded
+    </a></li>
+    </ul>
+</ul></aside><main class="main"><p>
         I like to avoid threads, so I naively hoped that
         V8 did not require them.
         But V8 does require threads
@@ -99,5 +110,6 @@
         As Gordon Bell warns,
         <a href="https://tinyurl.com/BellOnThreads">Parallelism is more difficult to implement than anyone imagines</a>.
     </p></main><footer class="footer"></footer>
-</div></body>
+</div>
+</body>
 </html>

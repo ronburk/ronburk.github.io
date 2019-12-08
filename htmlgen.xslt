@@ -124,6 +124,9 @@
         select="substring($Path,1,string-length($Path)-1)"
         />
     <xsl:copy>
+        <xsl:attribute name="id">
+            <xsl:value-of select="generate-id()"/>
+        </xsl:attribute>
         <xsl:choose>
             <xsl:when test="name()='Index'">
                 <xsl:attribute name="input">
@@ -159,6 +162,47 @@
     </xsl:copy>
 </xsl:template>
 
+<xsl:template match="Index" mode="GenNav">
+    <xsl:param name="This"/>
+    <ul id="menutree">
+    <li><a href="#"><xsl:apply-templates select="document(@input)//title/node()"/></a></li>
+        <xsl:apply-templates mode="GenNav">
+            <xsl:with-param name="This" select="$This"/>
+        </xsl:apply-templates>
+    </ul>
+
+</xsl:template>
+<xsl:template match="Entry" mode="GenNav">
+    <xsl:param name="This"/>
+    <li><a href="#"><xsl:apply-templates select="document(@input)//title/node()"/></a></li>
+</xsl:template>
+
+<xsl:template name="GenNavIndex">
+    <xsl:param name="This"/>
+    <xsl:param name="Cursor" select="exsl:node-set($MasterIndex)/Index"/>
+
+    <xsl:choose>
+        <xsl:when test="name($This)='Index'">
+            <ul id="menutree">
+                <li><a href="#"><xsl:value-of select="@href"/></a></li>
+                <xsl:call-template name="GenNavIndex">
+                    <xsl:with-param name="This" select="$This"/>
+                    <xsl:with-param name="Cursor" select="child::*[1]"/>
+                </xsl:call-template>
+            </ul>
+        </xsl:when>
+        <xsl:otherwise>
+                <li><a href="#"><xsl:value-of select="@href"/></a></li>
+                <xsl:call-template name="GenNavIndex">
+                    <xsl:with-param name="This" select="$This"/>
+                    <xsl:with-param name="Cursor" select="following-sibling::*[1]"/>
+                </xsl:call-template>
+        </xsl:otherwise>
+    </xsl:choose>
+
+</xsl:template>
+
+
 <!-- GenHTML: generate output HTML file for a given XML input file.
    -
    - Note that current node is the one in masterindex.xml.
@@ -188,7 +232,7 @@
     <xsl:variable name="NEXT" />
     
     <!-- create output HTML file here -->
-    <xsl:document href="{@output}" method="html">
+    <xsl:document href="{@output}" method="html" indent="yes">
         <html>
         <head>
         <style>
@@ -197,13 +241,17 @@
             <xsl:value-of select="$headerfooter.css"/>
         </style>
         </head>
-        <body>
+        <body><xsl:text>&#10;</xsl:text>
             <div class="grid-container">
                 <header class="header">
                     <xsl:apply-templates
                         select="document(@input)/Xml/head/title/node()"/>
                 </header>
-                <aside class="sidenav"></aside>
+                <aside class="sidenav">
+                    <xsl:apply-templates select="exsl:node-set($MasterIndex)/Index" mode="GenNav">
+                        <xsl:with-param name="This" select="."/>
+                    </xsl:apply-templates>
+                </aside>
                 <main class="main">
                     <xsl:apply-templates
                         select="document(@input)/Xml/body/*"/>
