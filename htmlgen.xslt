@@ -203,9 +203,12 @@ li.collapse input:checked ~ label::after {
 
 <xsl:template name="GenNavItem">
     <xsl:param name="This"/>
-
+<!--    <xsl:value-of select="concat('$This/@id is', $This/@id)"/>
+    <xsl:value-of select="concat('@id is', @id)"/>
+-->
     <xsl:choose>
-        <xsl:when test="Index and not(descendant-or-self::*[@id=$This/@id])">
+    <!-- if it should initially be collapsed -->
+        <xsl:when test="descendant-or-self::*[@id=$This/@id]">
             <input type="checkbox" id="{generate-id()}"/>
             <label for="{generate-id()}">
                 <a href="{@abs}">
