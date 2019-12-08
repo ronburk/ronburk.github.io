@@ -202,16 +202,32 @@ li.collapse input:checked ~ label::after {
 </xsl:template>
 
 <xsl:template name="GenNavItem">
-    <li>
-        <a href="{@abs}">
-            <xsl:apply-templates select="document(@input)//title/node()"/>
-        </a>
-    </li>
+    <xsl:param name="This"/>
+
+    <xsl:choose>
+        <xsl:when test="Index and not(descendant-or-self::*[@id=$This/@id])">
+            <input type="checkbox" id="{generate-id()}"/>
+            <label for="{generate-id()}">
+                <a href="{@abs}">
+                    <xsl:apply-templates select="document(@input)//title/node()"/>
+                </a>
+            </label>
+        </xsl:when>
+        <xsl:otherwise>
+            <li>
+                <a href="{@abs}">
+                    <xsl:apply-templates select="document(@input)//title/node()"/>
+                </a>
+            </li>
+        </xsl:otherwise>
+    </xsl:choose>
 </xsl:template>
 
 <xsl:template match="Index" mode="GenNav">
     <xsl:param name="This"/>
-    <xsl:call-template name="GenNavItem"/>
+    <xsl:call-template name="GenNavItem">
+        <xsl:with-param name="This" select="$This"/>
+    </xsl:call-template>
     <ul id="menutree">
         <xsl:apply-templates mode="GenNav">
             <xsl:with-param name="This" select="$This"/>
@@ -221,7 +237,9 @@ li.collapse input:checked ~ label::after {
 </xsl:template>
 <xsl:template match="Entry" mode="GenNav">
     <xsl:param name="This"/>
-    <xsl:call-template name="GenNavItem"/>
+    <xsl:call-template name="GenNavItem">
+        <xsl:with-param name="This" select="$This"/>
+    </xsl:call-template>
 </xsl:template>
 
 <xsl:template name="GenNavIndex">
