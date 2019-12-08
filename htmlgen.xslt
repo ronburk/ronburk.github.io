@@ -211,8 +211,8 @@ li.collapse input:checked ~ label::after {
 
 <xsl:template match="Index" mode="GenNav">
     <xsl:param name="This"/>
+    <xsl:call-template name="GenNavItem"/>
     <ul id="menutree">
-        <xsl:call-template name="GenNavItem"/>
         <xsl:apply-templates mode="GenNav">
             <xsl:with-param name="This" select="$This"/>
         </xsl:apply-templates>
@@ -230,8 +230,8 @@ li.collapse input:checked ~ label::after {
 
     <xsl:choose>
         <xsl:when test="name($This)='Index'">
+            <li><a href="#"><xsl:value-of select="@href"/></a></li>
             <ul id="menutree">
-                <li><a href="#"><xsl:value-of select="@href"/></a></li>
                 <xsl:call-template name="GenNavIndex">
                     <xsl:with-param name="This" select="$This"/>
                     <xsl:with-param name="Cursor" select="child::*[1]"/>
@@ -239,11 +239,11 @@ li.collapse input:checked ~ label::after {
             </ul>
         </xsl:when>
         <xsl:otherwise>
-                <li><a href="#"><xsl:value-of select="@href"/></a></li>
-                <xsl:call-template name="GenNavIndex">
-                    <xsl:with-param name="This" select="$This"/>
-                    <xsl:with-param name="Cursor" select="following-sibling::*[1]"/>
-                </xsl:call-template>
+            <li><a href="#"><xsl:value-of select="@href"/></a></li>
+            <xsl:call-template name="GenNavIndex">
+                <xsl:with-param name="This" select="$This"/>
+                <xsl:with-param name="Cursor" select="following-sibling::*[1]"/>
+            </xsl:call-template>
         </xsl:otherwise>
     </xsl:choose>
 
@@ -295,10 +295,12 @@ li.collapse input:checked ~ label::after {
                     <xsl:apply-templates
                         select="document(@input)/Xml/head/title/node()"/>
                 </header><xsl:text>&#10;</xsl:text>
-                <aside class="sidenav">
+                <aside class="sidenav"><xsl:text>&#10;</xsl:text>
+                <ul id="menutree">
                     <xsl:apply-templates select="exsl:node-set($MasterIndex)/Index" mode="GenNav">
                         <xsl:with-param name="This" select="."/>
                     </xsl:apply-templates>
+                </ul><xsl:text>&#10;</xsl:text>
                 </aside><xsl:text>&#10;</xsl:text>
                 <main class="main">
                     <xsl:apply-templates
