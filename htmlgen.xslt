@@ -23,6 +23,45 @@
 
 <xsl:output encoding="ISO-8859-15"/>
 
+<xsl:variable name="menu.css">
+
+/* [COLLAPSIBLE] */
+#menutree label {
+  position: relative;
+  display: block;
+  width: 100%;
+  cursor: pointer;
+}
+#menutree input[type=checkbox] {
+  display: none; /* Hide ugly checkbox */
+}
+
+/* Hide/collapse by default */
+li.collapse ul {
+  visibility: hidden;
+  opacity: 0;
+  max-height: 0; /* CSS bug. Cannot animate height... */
+  transition: all 0.5s;
+}
+label::after {
+  content: "\25b6";
+  position: absolute;
+  top: 0;
+  right: 0;
+  transition: all 0.5s;
+}
+
+/* Show when checked */
+li.collapse input:checked ~ ul {
+  visibility: visible;
+  opacity: 1;
+  max-height: 999px; /* Just give a big enough height for animation */
+}
+li.collapse input:checked ~ label::after {
+  transform: rotate(90deg);
+  }
+</xsl:variable>
+
 <xsl:variable name="headerfooter.css">
   .header, .footer {
     display: flex;
@@ -162,10 +201,18 @@
     </xsl:copy>
 </xsl:template>
 
+<xsl:template name="GenNavItem">
+    <li>
+        <a href="{@abs}">
+            <xsl:apply-templates select="document(@input)//title/node()"/>
+        </a>
+    </li>
+</xsl:template>
+
 <xsl:template match="Index" mode="GenNav">
     <xsl:param name="This"/>
     <ul id="menutree">
-    <li><a href="#"><xsl:apply-templates select="document(@input)//title/node()"/></a></li>
+        <xsl:call-template name="GenNavItem"/>
         <xsl:apply-templates mode="GenNav">
             <xsl:with-param name="This" select="$This"/>
         </xsl:apply-templates>
@@ -174,7 +221,7 @@
 </xsl:template>
 <xsl:template match="Entry" mode="GenNav">
     <xsl:param name="This"/>
-    <li><a href="#"><xsl:apply-templates select="document(@input)//title/node()"/></a></li>
+    <xsl:call-template name="GenNavItem"/>
 </xsl:template>
 
 <xsl:template name="GenNavIndex">
@@ -238,6 +285,7 @@
         <style>
             <xsl:value-of select="$main.css"/>
             <xsl:value-of select="$sidenav.css"/>
+            <xsl:value-of select="$menu.css"/>
             <xsl:value-of select="$headerfooter.css"/>
         </style>
         </head>
@@ -246,12 +294,12 @@
                 <header class="header">
                     <xsl:apply-templates
                         select="document(@input)/Xml/head/title/node()"/>
-                </header>
+                </header><xsl:text>&#10;</xsl:text>
                 <aside class="sidenav">
                     <xsl:apply-templates select="exsl:node-set($MasterIndex)/Index" mode="GenNav">
                         <xsl:with-param name="This" select="."/>
                     </xsl:apply-templates>
-                </aside>
+                </aside><xsl:text>&#10;</xsl:text>
                 <main class="main">
                     <xsl:apply-templates
                         select="document(@input)/Xml/body/*"/>
