@@ -37,6 +37,7 @@
   padding-left: 3px;
   margin: 0;
   font-size: smaller;
+  color: white;
 }
 
 #menutree, #menutree ul {
@@ -219,7 +220,7 @@ li.collapse input:checked ~ label::before {
     <xsl:param name="This"/>
     <li class="collapse">
         <input type="checkbox" id="{generate-id()}">
-            <xsl:if test="descendant::*[@id=$This/@id]">
+            <xsl:if test="descendant-or-self::*[@id=$This/@id]">
                 <xsl:attribute name="class">
                     <xsl:text>open-on-load</xsl:text>
                 </xsl:attribute>
