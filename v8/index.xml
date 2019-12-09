@@ -7,7 +7,8 @@
 </head>
 <body>
     <p>
-        V8 is Google's
+        <a href="https://github.com/v8/v8" title="The official mirror of the V8 Git repository">V8</a>
+        is Google's
         JavaScript engine.
         It is notably used inside of Google's Chrome
         web browser, Node.js, and Electron.

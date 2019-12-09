@@ -32,6 +32,13 @@
   width: 100%;
   cursor: pointer;
 }
+#menutree {
+  list-style-type: none;
+  padding-left: 3px;
+  margin: 0;
+  font-size: smaller;
+}
+
 #menutree, #menutree ul {
   list-style-type: none;
   padding-left: 1em;
@@ -334,11 +341,17 @@ li.collapse input:checked ~ label::before {
                     </xsl:if>
                 </main>
                 <footer class="footer">
-                    <xsl:if test="name(..)='Index'">
-                        <xsl:copy-of select="$UP"/>
-                    </xsl:if>
-                    <xsl:copy-of select="$NEXT"/>
-                    <xsl:copy-of select="$PREV"/>
+                    <div>
+                        NEXT: <xsl:copy-of select="$NEXT"/>
+                    </div>
+                    <div>
+                        <xsl:if test="name(..)='Index'">
+                            <xsl:copy-of select="$UP"/>
+                        </xsl:if>
+                    </div>
+                    <div>
+                        PREV: <xsl:copy-of select="$PREV"/>
+                    </div>
                 </footer>
             </div>
         </body>
