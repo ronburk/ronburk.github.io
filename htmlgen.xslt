@@ -288,7 +288,7 @@ li.collapse input:checked ~ label::before {
 
     <!-- PREV is next sibling, or empty if we are last sibling -->
     <xsl:variable name="PREV">
-        <xsl:for-each select="(ancestor::* | preceding-sibling::*)[last()]">
+        <xsl:for-each select="preceding-sibling::*[1]">
             <xsl:text>PREV: </xsl:text>
             <a href="{@abs}">
                 <xsl:value-of select="document(@input)/Xml/head/title/node()"/>
