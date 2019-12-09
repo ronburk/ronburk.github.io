@@ -50,7 +50,7 @@
 
 #menutree a, #menutree a:visited {
   color: white;
-
+  text-decoration: none;
 }
 /* Hide/collapse by default */
 li.collapse ul {
