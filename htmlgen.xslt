@@ -203,9 +203,6 @@ li.collapse input:checked ~ label::after {
 
 <xsl:template name="GenNavItem">
     <xsl:param name="This"/>
-<!--    <xsl:value-of select="concat('$This/@id is', $This/@id)"/>
-    <xsl:value-of select="concat('@id is', @id)"/>
--->
     <xsl:choose>
     <!-- if it should initially be collapsed -->
     <xsl:when test="descendant-or-self::*[@id=$This/@id]">
@@ -231,11 +228,11 @@ li.collapse input:checked ~ label::after {
     <li class="collapse">
         <input type="checkbox" id="{generate-id()}"/>
         <label for="{generate-id()}">
-            <a href="{@abs}">
+<!--            <a href="{@abs}"> -->
                 <xsl:apply-templates select="document(@input)//title/node()"/>
-            </a>
+<!--            </a> -->
         </label>
-        <ul id="menutree">
+        <ul>
             <xsl:apply-templates mode="GenNav">
                 <xsl:with-param name="This" select="$This"/>
             </xsl:apply-templates>
@@ -246,35 +243,10 @@ li.collapse input:checked ~ label::after {
 <xsl:template match="Entry" mode="GenNav">
     <xsl:param name="This"/>
     <li>
-        <xsl:call-template name="GenNavItem">
-            <xsl:with-param name="This" select="$This"/>
-        </xsl:call-template>
+        <a href="{@abs}">
+            <xsl:apply-templates select="document(@input)//title/node()"/>
+        </a>
     </li>
-</xsl:template>
-
-<xsl:template name="GenNavIndex">
-    <xsl:param name="This"/>
-    <xsl:param name="Cursor" select="exsl:node-set($MasterIndex)/Index"/>
-
-    <xsl:choose>
-        <xsl:when test="name($This)='Index'">
-            <li><a href="#"><xsl:value-of select="@href"/></a></li>
-            <ul id="menutree">
-                <xsl:call-template name="GenNavIndex">
-                    <xsl:with-param name="This" select="$This"/>
-                    <xsl:with-param name="Cursor" select="child::*[1]"/>
-                </xsl:call-template>
-            </ul>
-        </xsl:when>
-        <xsl:otherwise>
-            <li><a href="#"><xsl:value-of select="@href"/></a></li>
-            <xsl:call-template name="GenNavIndex">
-                <xsl:with-param name="This" select="$This"/>
-                <xsl:with-param name="Cursor" select="following-sibling::*[1]"/>
-            </xsl:call-template>
-        </xsl:otherwise>
-    </xsl:choose>
-
 </xsl:template>
 
 
