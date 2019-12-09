@@ -65,6 +65,8 @@
   display: block;
   width: 100%;
   cursor: pointer;
+}
+#menutree {
   margin-left: 5px;
   list-style-type: none;
   padding: 0;
@@ -81,7 +83,7 @@ li.collapse ul {
   max-height: 0; /* CSS bug. Cannot animate height... */
   transition: all 0.5s;
 }
-label::after {
+label::before {
   content: "\25b6";
   position: absolute;
   top: 0;
@@ -121,11 +123,11 @@ li.collapse input:checked ~ label::after {
     </header>
 <aside class="sidenav">
 <ul id="menutree"><li class="collapse">
-<input type="checkbox" id="idp1" class="open-on-load"><label for="idp1">Ron Burk github pages</label><ul>
+<input type="checkbox" id="idp1" class="open-on-load"><label for="idp1"></label><a href="/index.html">Ron Burk github pages</a><ul>
     <li class="collapse">
-<input type="checkbox" id="idp2" class="open-on-load"><label for="idp2">
+<input type="checkbox" id="idp2" class="open-on-load"><label for="idp2"></label><a href="/v8/index.html">
         Stumbling Around V8
-    </label><ul>
+    </a><ul>
         <li><a href="/v8/threads.html">
         V8 Single-Threaded and Multi-Threaded
     </a></li>

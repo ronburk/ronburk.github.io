@@ -31,6 +31,8 @@
   display: block;
   width: 100%;
   cursor: pointer;
+}
+#menutree {
   margin-left: 5px;
   list-style-type: none;
   padding: 0;
@@ -47,7 +49,7 @@ li.collapse ul {
   max-height: 0; /* CSS bug. Cannot animate height... */
   transition: all 0.5s;
 }
-label::after {
+label::before {
   content: "\25b6";
   position: absolute;
   top: 0;
@@ -216,11 +218,10 @@ li.collapse input:checked ~ label::after {
                 </xsl:attribute>
             </xsl:if>
         </input>
-        <label for="{generate-id()}">
-<!--            <a href="{@abs}"> -->
+        <label for="{generate-id()}"> </label>
+            <a href="{@abs}">
                 <xsl:apply-templates select="document(@input)//title/node()"/>
-<!--            </a> -->
-        </label>
+            </a>
         <ul>
             <xsl:apply-templates mode="GenNav">
                 <xsl:with-param name="This" select="$This"/>
