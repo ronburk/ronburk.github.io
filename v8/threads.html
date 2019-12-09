@@ -66,8 +66,7 @@
   width: 100%;
   cursor: pointer;
 }
-#menutree {
-  margin-left: 5px;
+#menutree ul {
   list-style-type: none;
   padding: 0;
   margin: 0;
@@ -97,7 +96,7 @@ li.collapse input:checked ~ ul {
   opacity: 1;
   max-height: 999px; /* Just give a big enough height for animation */
 }
-li.collapse input:checked ~ label::after {
+li.collapse input:checked ~ label::before {
   transform: rotate(90deg);
   }
 
@@ -111,7 +110,11 @@ li.collapse input:checked ~ label::after {
 </style>
 <script>
             function InitNav(){
-                document.getElementsByClassName("open-on-load").checked = true;
+                //document.getElementsByClassName("open-on-load").checked = true;
+                let nodes = document.getElementsByClassName("open-on-load");
+                for(let i = 0; i < nodes.length(); ++i){
+                    nodes[i].click();
+                    }
                 }
                 window.onload = InitNav;
         </script>

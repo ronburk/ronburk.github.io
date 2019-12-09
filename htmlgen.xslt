@@ -279,9 +279,9 @@ li.collapse input:checked ~ label::before {
         <script>
             function InitNav(){
                 //document.getElementsByClassName("open-on-load").checked = true;
-                document.getElementsByClassName("open-on-load").forEach(
-                    function(item){
-                        item.Click();
+                let nodes = document.getElementsByClassName("open-on-load");
+                for(let i = 0; i &lt; nodes.length(); ++i){
+                    nodes[i].click();
                     }
                 }
                 window.onload = InitNav;
