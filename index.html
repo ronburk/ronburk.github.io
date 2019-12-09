@@ -70,6 +70,10 @@
   display: none; /* Hide ugly checkbox */
 }
 
+ul {
+    margin-left: 5px;
+}
+
 /* Hide/collapse by default */
 li.collapse ul {
   visibility: hidden;
@@ -103,6 +107,12 @@ li.collapse input:checked ~ label::after {
     background-color: #648ca6;
   }
 </style>
+<script>
+            function InitNav(){
+                document.getElementByClass("open-on-load").checked = true;
+                }
+                window.onload = InitNav;
+        </script>
 </head>
 <body>
 <div class="grid-container">

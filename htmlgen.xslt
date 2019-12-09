@@ -36,6 +36,10 @@
   display: none; /* Hide ugly checkbox */
 }
 
+ul {
+    margin-left: 5px;
+}
+
 /* Hide/collapse by default */
 li.collapse ul {
   visibility: hidden;
@@ -201,32 +205,17 @@ li.collapse input:checked ~ label::after {
     </xsl:copy>
 </xsl:template>
 
-<xsl:template name="GenNavItem">
-    <xsl:param name="This"/>
-    <xsl:choose>
-    <!-- if it should initially be collapsed -->
-    <xsl:when test="descendant-or-self::*[@id=$This/@id]">
-            <input type="checkbox" id="{generate-id()}"/>
-            <label for="{generate-id()}">
-                <a href="{@abs}">
-                    <xsl:apply-templates select="document(@input)//title/node()"/>
-                </a>
-            </label>
-        </xsl:when>
-        <xsl:otherwise>
-            <li>
-                <a href="{@abs}">
-                    <xsl:apply-templates select="document(@input)//title/node()"/>
-                </a>
-            </li>
-        </xsl:otherwise>
-    </xsl:choose>
-</xsl:template>
 
 <xsl:template match="Index" mode="GenNav">
     <xsl:param name="This"/>
     <li class="collapse">
-        <input type="checkbox" id="{generate-id()}"/>
+        <input type="checkbox" id="{generate-id()}">
+            <xsl:if test="descendant::*[@id=$This/@id]">
+                <xsl:attribute name="class">
+                    <xsl:text>open-on-load</xsl:text>
+                </xsl:attribute>
+            </xsl:if>
+        </input>
         <label for="{generate-id()}">
 <!--            <a href="{@abs}"> -->
                 <xsl:apply-templates select="document(@input)//title/node()"/>
@@ -287,6 +276,12 @@ li.collapse input:checked ~ label::after {
             <xsl:value-of select="$menu.css"/>
             <xsl:value-of select="$headerfooter.css"/>
         </style>
+        <script>
+            function InitNav(){
+                document.getElementByClass("open-on-load").checked = true;
+                }
+                window.onload = InitNav;
+        </script>
         </head>
         <body><xsl:text>&#10;</xsl:text>
             <div class="grid-container">
