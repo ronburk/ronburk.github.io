@@ -278,7 +278,7 @@ li.collapse input:checked ~ label::after {
         </style>
         <script>
             function InitNav(){
-                document.getElementByClass("open-on-load").checked = true;
+                document.getElementByClassName("open-on-load").checked = true;
                 }
                 window.onload = InitNav;
         </script>
