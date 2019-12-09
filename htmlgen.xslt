@@ -48,7 +48,7 @@
   display: none; /* Hide ugly checkbox */
 }
 
-#menutree a {
+#menutree a, #menutree a:visited {
   color: white;
 
 }
