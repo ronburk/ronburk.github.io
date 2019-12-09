@@ -31,13 +31,13 @@
   display: block;
   width: 100%;
   cursor: pointer;
+  margin-left: 5px;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 #menutree input[type=checkbox] {
   display: none; /* Hide ugly checkbox */
-}
-
-ul {
-    margin-left: 5px;
 }
 
 /* Hide/collapse by default */
@@ -258,7 +258,7 @@ li.collapse input:checked ~ label::after {
     <xsl:variable name="UP">
         <xsl:if test="name(..)='Index'">
             UP:
-            <a href="">
+            <a href="{../@abs}">
                 <xsl:value-of select="document(../@input)/Xml/head/title/node()"/>
             </a>
         </xsl:if>
