@@ -275,6 +275,7 @@ li.collapse input:checked ~ label::before {
     <!-- NEXT is next sibling, or empty if we are last sibling -->
     <xsl:variable name="NEXT">
         <xsl:for-each select="(child::* | following-sibling::*)[1]">
+            <xsl:text>NEXT: </xsl:text>
             <a href="{@abs}">
                 <xsl:value-of select="document(@input)/Xml/head/title/node()"/>
             </a>
@@ -284,6 +285,7 @@ li.collapse input:checked ~ label::before {
     <!-- PREV is next sibling, or empty if we are last sibling -->
     <xsl:variable name="PREV">
         <xsl:for-each select="(ancestor::* | preceding-sibling::*)[1]">
+            <xsl:text>PREV: </xsl:text>
             <a href="{@abs}">
                 <xsl:value-of select="document(@input)/Xml/head/title/node()"/>
             </a>
@@ -342,7 +344,7 @@ li.collapse input:checked ~ label::before {
                 </main>
                 <footer class="footer">
                     <div>
-                        NEXT: <xsl:copy-of select="$NEXT"/>
+                        <xsl:copy-of select="$NEXT"/>
                     </div>
                     <div>
                         <xsl:if test="name(..)='Index'">
@@ -350,7 +352,7 @@ li.collapse input:checked ~ label::before {
                         </xsl:if>
                     </div>
                     <div>
-                        PREV: <xsl:copy-of select="$PREV"/>
+                        <xsl:copy-of select="$PREV"/>
                     </div>
                 </footer>
             </div>
