@@ -32,7 +32,7 @@
   width: 100%;
   cursor: pointer;
 }
-#menutree ul {
+#menutree, #menutree ul {
   list-style-type: none;
   padding: 0;
   margin: 0;
@@ -280,7 +280,7 @@ li.collapse input:checked ~ label::before {
             function InitNav(){
                 //document.getElementsByClassName("open-on-load").checked = true;
                 let nodes = document.getElementsByClassName("open-on-load");
-                for(let i = 0; i &lt; nodes.length(); ++i){
+                for(let i = 0; i &lt; nodes.length; ++i){
                     nodes[i].click();
                     }
                 }
