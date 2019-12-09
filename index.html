@@ -108,18 +108,19 @@ li.collapse input:checked ~ label::after {
 <div class="grid-container">
 <header class="header">Ron Burk github pages</header>
 <aside class="sidenav">
-<ul id="menutree">
+<ul id="menutree"><li class="collapse">
 <input type="checkbox" id="idp1"><label for="idp1"><a href="/index.html">Ron Burk github pages</a></label><ul id="menutree">
-    <li><a href="/v8/index.html">
+    <li class="collapse">
+<input type="checkbox" id="idp2"><label for="idp2"><a href="/v8/index.html">
         Stumbling Around V8
-    </a></li>
-<ul id="menutree">
-        <li><a href="/v8/threads.html">
+    </a></label><ul id="menutree">
+        <li><li><a href="/v8/threads.html">
         V8 Single-Threaded and Multi-Threaded
-    </a></li>
+    </a></li></li>
     </ul>
+</li>
 </ul>
-</ul>
+</li></ul>
 </aside>
 <main class="main"><p>
         A place to store web pages related to my

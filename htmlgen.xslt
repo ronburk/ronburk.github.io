@@ -208,7 +208,7 @@ li.collapse input:checked ~ label::after {
 -->
     <xsl:choose>
     <!-- if it should initially be collapsed -->
-        <xsl:when test="descendant-or-self::*[@id=$This/@id]">
+    <xsl:when test="descendant-or-self::*[@id=$This/@id]">
             <input type="checkbox" id="{generate-id()}"/>
             <label for="{generate-id()}">
                 <a href="{@abs}">
@@ -228,21 +228,28 @@ li.collapse input:checked ~ label::after {
 
 <xsl:template match="Index" mode="GenNav">
     <xsl:param name="This"/>
-    <xsl:call-template name="GenNavItem">
-        <xsl:with-param name="This" select="$This"/>
-    </xsl:call-template>
-    <ul id="menutree">
-        <xsl:apply-templates mode="GenNav">
-            <xsl:with-param name="This" select="$This"/>
-        </xsl:apply-templates>
-    </ul>
-
+    <li class="collapse">
+        <input type="checkbox" id="{generate-id()}"/>
+        <label for="{generate-id()}">
+            <a href="{@abs}">
+                <xsl:apply-templates select="document(@input)//title/node()"/>
+            </a>
+        </label>
+        <ul id="menutree">
+            <xsl:apply-templates mode="GenNav">
+                <xsl:with-param name="This" select="$This"/>
+            </xsl:apply-templates>
+        </ul>
+    </li>
 </xsl:template>
+
 <xsl:template match="Entry" mode="GenNav">
     <xsl:param name="This"/>
-    <xsl:call-template name="GenNavItem">
-        <xsl:with-param name="This" select="$This"/>
-    </xsl:call-template>
+    <li>
+        <xsl:call-template name="GenNavItem">
+            <xsl:with-param name="This" select="$This"/>
+        </xsl:call-template>
+    </li>
 </xsl:template>
 
 <xsl:template name="GenNavIndex">
@@ -287,15 +294,14 @@ li.collapse input:checked ~ label::after {
     </xsl:message>
     
     <!-- UP is parent node, or empty if we are the topmost node. -->
-    <xsl:variable name="UP" select=".."/>
-    <xsl:choose>
-    <xsl:when test="name(..)='Index'">
-        <xsl:message> UP is present</xsl:message>
-    </xsl:when>
-    <xsl:otherwise>
-        <xsl:message> UP is not present</xsl:message>
-    </xsl:otherwise>
-    </xsl:choose>
+    <xsl:variable name="UP">
+        <xsl:if test="name(..)='Index'">
+            UP:
+            <a href="">
+                <xsl:value-of select="document(../@input)/Xml/head/title/node()"/>
+            </a>
+        </xsl:if>
+    </xsl:variable>
 
     <xsl:variable name="NEXT" />
     
@@ -339,7 +345,11 @@ li.collapse input:checked ~ label::after {
                         </xsl:for-each>
                     </xsl:if>
                 </main>
-                <footer class="footer"></footer>
+                <footer class="footer">
+                    <xsl:if test="name(..)='Index'">
+                        <xsl:copy-of select="$UP"/>
+                    </xsl:if>
+                </footer>
             </div>
         </body>
         </html>

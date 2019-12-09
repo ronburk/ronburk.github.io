@@ -110,17 +110,19 @@ li.collapse input:checked ~ label::after {
         Stumbling Around V8
     </header>
 <aside class="sidenav">
-<ul id="menutree">
+<ul id="menutree"><li class="collapse">
 <input type="checkbox" id="idp1"><label for="idp1"><a href="/index.html">Ron Burk github pages</a></label><ul id="menutree">
-    <input type="checkbox" id="idp2"><label for="idp2"><a href="/v8/index.html">
+    <li class="collapse">
+<input type="checkbox" id="idp2"><label for="idp2"><a href="/v8/index.html">
         Stumbling Around V8
     </a></label><ul id="menutree">
-        <li><a href="/v8/threads.html">
+        <li><li><a href="/v8/threads.html">
         V8 Single-Threaded and Multi-Threaded
-    </a></li>
+    </a></li></li>
     </ul>
+</li>
 </ul>
-</ul>
+</li></ul>
 </aside>
 <main class="main"><p>
         V8 is Google's
@@ -148,7 +150,9 @@ li.collapse input:checked ~ label::after {
     </p>
 <p><a href="/v8/threads/">
         V8 Single-Threaded and Multi-Threaded
-    </a></p></main><footer class="footer"></footer>
+    </a></p></main><footer class="footer">
+            UP:
+            <a href="">Ron Burk github pages</a></footer>
 </div>
 </body>
 </html>

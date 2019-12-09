@@ -110,17 +110,21 @@ li.collapse input:checked ~ label::after {
         V8 Single-Threaded and Multi-Threaded
     </header>
 <aside class="sidenav">
-<ul id="menutree">
+<ul id="menutree"><li class="collapse">
 <input type="checkbox" id="idp1"><label for="idp1"><a href="/index.html">Ron Burk github pages</a></label><ul id="menutree">
-    <input type="checkbox" id="idp2"><label for="idp2"><a href="/v8/index.html">
+    <li class="collapse">
+<input type="checkbox" id="idp2"><label for="idp2"><a href="/v8/index.html">
         Stumbling Around V8
     </a></label><ul id="menutree">
-        <input type="checkbox" id="idp3"><label for="idp3"><a href="/v8/threads.html">
+        <li>
+<input type="checkbox" id="idp3"><label for="idp3"><a href="/v8/threads.html">
         V8 Single-Threaded and Multi-Threaded
     </a></label>
+</li>
     </ul>
+</li>
 </ul>
-</ul>
+</li></ul>
 </aside>
 <main class="main"><p>
         I like to avoid threads, so I naively hoped that
@@ -150,7 +154,11 @@ li.collapse input:checked ~ label::after {
         is more important than protecting them from memory management.
         As Gordon Bell warns,
         <a href="https://tinyurl.com/BellOnThreads">Parallelism is more difficult to implement than anyone imagines</a>.
-    </p></main><footer class="footer"></footer>
+    </p></main><footer class="footer">
+            UP:
+            <a href="">
+        Stumbling Around V8
+    </a></footer>
 </div>
 </body>
 </html>
