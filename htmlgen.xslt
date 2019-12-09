@@ -34,7 +34,7 @@
 }
 #menutree, #menutree ul {
   list-style-type: none;
-  padding: 0;
+  padding-left: 1em;
   margin: 0;
 }
 #menutree input[type=checkbox] {
@@ -136,6 +136,7 @@ li.collapse input:checked ~ label::before {
       background-color: #648ca6;
     }
 </xsl:variable>
+
 
 <!-- GetPath: return full path associated with this node.
   -->
@@ -264,7 +265,23 @@ li.collapse input:checked ~ label::before {
         </xsl:if>
     </xsl:variable>
 
-    <xsl:variable name="NEXT" />
+    <!-- NEXT is next sibling, or empty if we are last sibling -->
+    <xsl:variable name="NEXT">
+        <xsl:for-each select="(child::* | following-sibling::*)[1]">
+            <a href="{@abs}">
+                <xsl:value-of select="document(@input)/Xml/head/title/node()"/>
+            </a>
+        </xsl:for-each>
+    </xsl:variable>
+
+    <!-- PREV is next sibling, or empty if we are last sibling -->
+    <xsl:variable name="PREV">
+        <xsl:for-each select="(ancestor::* | preceding-sibling::*)[1]">
+            <a href="{@abs}">
+                <xsl:value-of select="document(@input)/Xml/head/title/node()"/>
+            </a>
+        </xsl:for-each>
+    </xsl:variable>
     
     <!-- create output HTML file here -->
     <xsl:document href="{@output}" method="html" indent="yes">
@@ -320,6 +337,8 @@ li.collapse input:checked ~ label::before {
                     <xsl:if test="name(..)='Index'">
                         <xsl:copy-of select="$UP"/>
                     </xsl:if>
+                    <xsl:copy-of select="$NEXT"/>
+                    <xsl:copy-of select="$PREV"/>
                 </footer>
             </div>
         </body>
