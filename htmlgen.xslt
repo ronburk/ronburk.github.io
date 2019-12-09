@@ -32,8 +32,7 @@
   width: 100%;
   cursor: pointer;
 }
-#menutree {
-  margin-left: 5px;
+#menutree ul {
   list-style-type: none;
   padding: 0;
   margin: 0;
@@ -63,7 +62,7 @@ li.collapse input:checked ~ ul {
   opacity: 1;
   max-height: 999px; /* Just give a big enough height for animation */
 }
-li.collapse input:checked ~ label::after {
+li.collapse input:checked ~ label::before {
   transform: rotate(90deg);
   }
 </xsl:variable>
@@ -279,7 +278,11 @@ li.collapse input:checked ~ label::after {
         </style>
         <script>
             function InitNav(){
-                document.getElementsByClassName("open-on-load").checked = true;
+                //document.getElementsByClassName("open-on-load").checked = true;
+                document.getElementsByClassName("open-on-load").forEach(
+                    function(item){
+                        item.Click();
+                    }
                 }
                 window.onload = InitNav;
         </script>
