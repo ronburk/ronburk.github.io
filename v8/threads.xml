@@ -2,7 +2,7 @@
 <Xml>
 <head>
     <title>
-        V8 Single-Threaded and Multi-Threaded
+        V8: Single- and Multi-Threaded
     </title>
 </head>
 <body>
@@ -19,7 +19,8 @@
         See <a href="https://stackoverflow.com/questions/56118604/wanting-to-understand-purpose-and-count-of-v8s-workerthreads">this StackOverflow question</a>.
     </p>
     <p>
-        To be clear, <a href="https://www.ecma-international.org/ecma-262/5.1/">ECMAScript</a> is single-threaded,
+        To be clear,
+        <a href="https://www.ecma-international.org/ecma-262/5.1/">ECMAScript</a> is single-threaded,
         so V8's implementation of that language
         is likely to always be as well.
         As <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop">this overview</a> implies,
@@ -33,7 +34,28 @@
         Protecting the masses of programmers from multi-threading
         is more important than protecting them from memory management.
         As Gordon Bell warns,
-        <a href="https://tinyurl.com/BellOnThreads">Parallelism is more difficult to implement than anyone imagines</a>.
+        <a href="https://tinyurl.com/BellOnThreads"
+           >Parallelism is more difficult to implement than
+        anyone imagines</a>.
+    </p>
+    <p>
+        Of course, since V8 lets you run multiple JavaScript
+        engines in the same process,
+        you are always free to have more than one
+        single-threaded JavaScript environment operating at
+        the same time.
+        You have to arrange for them to communicate, however,
+        if they are sharing the work,
+        just like a web browser has to use a clunky
+        message-posting mechanism to make
+        <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers" title="Web Workers API">"web workers"</a>
+        (background JavaScript "threads") actually work.
+    </p>
+    <p>
+        The V8 library includes
+        <a href="https://github.com/v8/v8/blob/master/src/libplatform/worker-thread.cc">mild support</a>
+        for this.
+        But I haven't studied it, so may be deeply confused.
     </p>
 </body>
 </Xml>
