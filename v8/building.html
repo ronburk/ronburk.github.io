@@ -2,6 +2,26 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <style>
+code {
+    font-size: bigger;
+}
+h1 {
+    font-size: smaller;
+}
+pre code {
+  background-color: #eee;
+  border: 1px solid #999;
+  display: block;
+  padding: 20px;
+}
+
+code.inline {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+}
+    
+
     /* Simple dashboard grid CSS */
 
     /* Assign grid instructions to our parent grid container */
@@ -30,6 +50,9 @@
     .main {
       grid-area: main;
       background-color: #8fd4d9;
+      padding-left: 1.5em;
+      padding-right: 2em;
+      padding-bottom: 2em;
     }
 
     .footer {
@@ -172,15 +195,15 @@ li.collapse input:checked ~ label::before {
         <a href="https://bugs.chromium.org/p/v8/issues/detail?id=3787">someone said</a>
         "OUCH 2.3GB to compile 40mb worth of sources?"
         Also make sure you have a surprising amount of free time to
-        fiddle with this incase things don't quite go your way.
+        fiddle with this in case things don't quite go your way.
         As
         <a href="https://bugs.chromium.org/p/v8/issues/detail?id=3787">someone said</a>
-        "all this just to compile one compoent to play around with???
+        "all this just to compile one component to play around with???
         drug addicts!!!"
         [Disclaimer: I have no knowledge of what kind of drugs
         the V8 developers might be addicted to.]
     </p>
-<h1>Google Tools</h1>
+<h1>Things to Ponder</h1>
 <p>
         To get you started, Google has a
         <a href="https://v8.dev/docs/embed" title="Getting started with embedding V8">guide</a>
@@ -200,15 +223,15 @@ li.collapse input:checked ~ label::before {
         In the beginning though,
         you might logically just want the "latest stable."
         You will be delighted to discover this involves going to
-        a random appspot.com page, finding the latest stable
-        <emph>Chromium</emph> for your platform,
-        then finding the V8 verion associated with <emph>that</emph>.
+        a random <code>appspot.com</code> page, finding the latest stable
+        <em>Chromium</em> for your platform,
+        then finding the V8 version associated with <em>that</em>.
         That's only the start of your journey to discover how
         to check out the latest stable version.
         If you're doing this at 2am, you may begin to giggle.
     </p>
 <p>
-        One early decision you should make is your tool chain.
+        One early decision you might consider is your tool chain.
         I started out trying to build with g++, but then
         <a href="https://stackoverflow.com/questions/58985987/hello-world-cc-sample-seems-to-leak-memory" title="hello-world.cc sample seems to leak memory">discovered</a>
         the V8 developers apparently use
@@ -223,6 +246,11 @@ li.collapse input:checked ~ label::before {
         V8 is a pretty hefty download,
         and includes its own copy of clang.
     </p>
+<p>
+        Enough pondering. Let's suppose all we want in the world is to get the
+        simplest possible C++ program linked with the simplest possible build of the V8 library.
+        Let the adventure begin!
+    </p>
 <h1>Simple Install</h1>
 <p>
         The default install is just a few commands...
@@ -236,7 +264,7 @@ li.collapse input:checked ~ label::before {
         Because you're not a glutton for punishment,
         you're going to build this thing on Ubuntu
         and just take all the defaults
-        (e.g. don't try to get a <emph>particular</emph>
+        (e.g. don't try to get a <em>particular</em>
         version of V8). You can do it!
         Create some empty directory, like
         <code>./embedv8</code>
@@ -256,7 +284,7 @@ li.collapse input:checked ~ label::before {
         export PATH=${PATH}:${$PWD/depot_tools}
     </code></pre>
 <p>
-        Now you have ask the depot tools to "update" themselves.
+        Now you must ask the depot tools to "update" themselves.
         Why? I haven't the slightest idea and the Google docs
         ain't gonna tell us. But OK.
         Remember, you altered your path so that you can just type
@@ -299,7 +327,7 @@ li.collapse input:checked ~ label::before {
     </code></pre>
 <p>
         After some grinding away, you have a copy of V8.
-        If you're using my diretory structure,
+         If you're using my directory structure,
         then <code>embedv8</code> has two subdirectories now:
         <code>embedv8/depot_tools</code> and
         <code>embedv8/v8</code>.
@@ -308,7 +336,7 @@ li.collapse input:checked ~ label::before {
         hidden directory
         <code>embedv8/.cipd</code>
         and the hidden files
-        <code>embedv8/.gclient</code> and <code>embedv8/.gclient??</code>.
+        <code>embedv8/.gclient</code> and <code>embedv8/.gclient_entries</code>.
     </p>
 <p>
         The
@@ -344,9 +372,11 @@ li.collapse input:checked ~ label::before {
         <q>the convenience workflow</q> in
         <code>embedv8/v8/tools/dev/gm.py</code>.
         If you alias it in your shell, as Google recommends (e.g.):
-        <pre><code>
+    </p>
+<pre><code>
             alias gm=${PWD}/v8/tools/dev/gm.py
         </code></pre>
+<p>
         Then the next step is to invoke it with the name of
         one of the <q>known configurations.</q>
     </p>
@@ -354,11 +384,13 @@ li.collapse input:checked ~ label::before {
         What exactly are the <q>known configurations</q> you can
         ask <code>gm</code> to build?
         Well, <code>gm</code> is actually using another tool under
-        the covers, and <emph>that</emph> tool can tell you the
+        the covers, and <em>that</em> tool can tell you the
         list of known configurations. Like so (keep making aliases for yourself):
-        <pre><code>
+    </p>
+<pre><code>
             embedv8/v8/tools/dev/v8gen.py list
         </code></pre>
+<p>
         On this particular day, <code>v8gen.py</code> claims to know
         these configuration names:
     </p>
@@ -404,23 +436,23 @@ li.collapse input:checked ~ label::before {
         so my guess is I should use the configuration
         <q>x64.debug</q>.
         So, I type:
-        <pre><code>
+        <code class="inline">
             gm x64.debug
-        </code></pre>
+        </code>
         Oooops! Make sure you run that command while in the top level
         directory of your V8 check out.
         In the example I'm following here, that means:
-        <pre><code>
+        <code class="inline">
             cd embedv8/v8
             gm x64.debug
-        </code></pre>
+        </code>
         And then stand back, and wait.
         Takes a while to do all o' that there buildin'.
         And then, voila!, you have built V8!
     </p>
 <h1>What Exactly Did You Build?</h1>
 <p>
-        Of course, to actually write code that <emph>works with</emph>
+        Of course, to actually write code that <em>works with</em>
         the V8 library you just built,
         you're going to need a little bit of information.
         Let's start at the top: what compiler was used to build
@@ -434,7 +466,7 @@ li.collapse input:checked ~ label::before {
 <p>
         <code>gm</code> kindly gives some tantalizing hints about what has gone on
         when it runs:
-        <pre>
+        <code class="inline">
             # mkdir -p out/x64.debug
             # echo &gt; out/x64.debug/args.gn &lt;&lt; EOF
             is_component_build = true
@@ -448,7 +480,7 @@ li.collapse input:checked ~ label::before {
             v8_enable_slow_dchecks = true
             v8_optimized_debug = false
             EOF
-        </pre>
+        </code>
         Do you see <q>clang</q> or <q>g++</q> in there?
         Me neither.
         We must, alas, learn more arbitrary stuff that will
@@ -459,22 +491,30 @@ li.collapse input:checked ~ label::before {
         called <code>gn</code>.
         <code>gn</code> can tell you what options were used with a particular
         build of V8.
-        Keep in mind stuff (relative to directory structure my examples are using):
-        First, you should be in <code>embedv8/v8</code> to run
-        these V8 build tools that all reside in
-        <code>embedv8/v8/tools/dev</code>
-        (alias them all, add it to your PATH, whatever floats your bash).
-        Second, to support different side-by-side builds, the V8 build tools
-        will need to put each build in a different output directory tree;
-        for example, a build of the <q>known configuration</q> called
-        <q>x64.release</q> will be stored in the directory named:
-        <code>embedv8/v8/out/x64.release</code>.
-        Third, it is nearly logical then that the V8 build tools
-        will often want to know which build you are referring to
-        (which is maddening if you only ever have one, of course),
-        so you can expect to have to supply command-line arguments
-        like <q>out/x64.release</q>.
+        Keep in mind some stuff (relative to the directory structure my examples are using):
     </p>
+<ul>
+        <li>
+            First, you should be in <code>embedv8/v8</code> to run
+            these V8 build tools that all reside in
+            <code>embedv8/v8/tools/dev</code>
+            (alias them all, add it to your PATH, whatever floats your bash).
+        </li>
+        <li>
+            Second, to support different side-by-side builds, the V8 build tools
+            will need to put each build in a different output directory tree;
+            for example, a build of the <q>known configuration</q> called
+            <q>x64.release</q> will be stored in the directory named:
+            <code>embedv8/v8/out/x64.release</code>.
+        </li>
+        <li>
+            Third, it is nearly logical then that the V8 build tools
+            will often want to know which build you are referring to
+            (which is maddening if you only ever have one, of course),
+            so you can expect to have to supply command-line arguments
+            like <q>out/x64.release</q>.
+        </li>
+    </ul>
 <p>
         Recall, if you can remember that far back, what we were trying to do:
         figure out exactly how the V8 library configuration named

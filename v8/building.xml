@@ -53,9 +53,9 @@
         In the beginning though,
         you might logically just want the "latest stable."
         You will be delighted to discover this involves going to
-        a random appspot.com page, finding the latest stable
-        <emph>Chromium</emph> for your platform,
-        then finding the V8 version associated with <emph>that</emph>.
+        a random <code>appspot.com</code> page, finding the latest stable
+        <em>Chromium</em> for your platform,
+        then finding the V8 version associated with <em>that</em>.
         That's only the start of your journey to discover how
         to check out the latest stable version.
         If you're doing this at 2am, you may begin to giggle.
@@ -100,7 +100,7 @@
         Because you're not a glutton for punishment,
         you're going to build this thing on Ubuntu
         and just take all the defaults
-        (e.g. don't try to get a <emph>particular</emph>
+        (e.g. don't try to get a <em>particular</em>
         version of V8). You can do it!
         Create some empty directory, like
         <code>./embedv8</code>
@@ -220,7 +220,7 @@
         What exactly are the <q>known configurations</q> you can
         ask <code>gm</code> to build?
         Well, <code>gm</code> is actually using another tool under
-        the covers, and <emph>that</emph> tool can tell you the
+        the covers, and <em>that</em> tool can tell you the
         list of known configurations. Like so (keep making aliases for yourself):
     </p>
         <pre><code>
@@ -288,7 +288,7 @@
     </p>
     <h1>What Exactly Did You Build?</h1>
     <p>
-        Of course, to actually write code that <emph>works with</emph>
+        Of course, to actually write code that <em>works with</em>
         the V8 library you just built,
         you're going to need a little bit of information.
         Let's start at the top: what compiler was used to build
@@ -328,29 +328,29 @@
         <code>gn</code> can tell you what options were used with a particular
         build of V8.
         Keep in mind some stuff (relative to the directory structure my examples are using):
-        <ul>
-            <li>
-        First, you should be in <code>embedv8/v8</code> to run
-        these V8 build tools that all reside in
-        <code>embedv8/v8/tools/dev</code>
-        (alias them all, add it to your PATH, whatever floats your bash).
-            </li>
-            <li>
-        Second, to support different side-by-side builds, the V8 build tools
-        will need to put each build in a different output directory tree;
-        for example, a build of the <q>known configuration</q> called
-        <q>x64.release</q> will be stored in the directory named:
-        <code>embedv8/v8/out/x64.release</code>.
-            </li>
-            <li>
-        Third, it is nearly logical then that the V8 build tools
-        will often want to know which build you are referring to
-        (which is maddening if you only ever have one, of course),
-        so you can expect to have to supply command-line arguments
-        like <q>out/x64.release</q>.
-            </li>
-        </ul>
     </p>
+    <ul>
+        <li>
+            First, you should be in <code>embedv8/v8</code> to run
+            these V8 build tools that all reside in
+            <code>embedv8/v8/tools/dev</code>
+            (alias them all, add it to your PATH, whatever floats your bash).
+        </li>
+        <li>
+            Second, to support different side-by-side builds, the V8 build tools
+            will need to put each build in a different output directory tree;
+            for example, a build of the <q>known configuration</q> called
+            <q>x64.release</q> will be stored in the directory named:
+            <code>embedv8/v8/out/x64.release</code>.
+        </li>
+        <li>
+            Third, it is nearly logical then that the V8 build tools
+            will often want to know which build you are referring to
+            (which is maddening if you only ever have one, of course),
+            so you can expect to have to supply command-line arguments
+            like <q>out/x64.release</q>.
+        </li>
+    </ul>
     <p>
         Recall, if you can remember that far back, what we were trying to do:
         figure out exactly how the V8 library configuration named

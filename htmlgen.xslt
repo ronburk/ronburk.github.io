@@ -23,6 +23,28 @@
 
 <xsl:output encoding="ISO-8859-15"/>
 
+
+<xsl:variable name="style.css">
+code {
+    font-size: bigger;
+}
+h1 {
+    font-size: smaller;
+}
+pre code {
+  background-color: #eee;
+  border: 1px solid #999;
+  display: block;
+  padding: 20px;
+}
+
+code.inline {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+}
+    
+</xsl:variable>
 <xsl:variable name="menu.css">
 
 /* [COLLAPSIBLE] */
@@ -304,7 +326,7 @@ li.collapse input:checked ~ label::before {
         <html>
         <head>
             <style>
-                <xsl:value-of select="document('style.css')"/>
+                <xsl:value-of select="$style.css"/>
                 <xsl:value-of select="$main.css"/>
                 <xsl:value-of select="$sidenav.css"/>
                 <xsl:value-of select="$menu.css"/>
