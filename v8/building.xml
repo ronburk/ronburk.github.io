@@ -107,18 +107,18 @@
         and <code>cd</code> to it.
         First, download the funky Google "depot tools":
     </p>
-    <pre><code>
+    <code class="block">
         git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
-    </code></pre>
+    </code>
     <p>
         They will get put in <code>./depot_tools</code> and you will
         next need to alter your PATH environment variable so executables
         there are available to you
         (and to them when you run them).
     </p>
-    <pre><code>
+    <code class="block">
         export PATH=${PATH}:${$PWD/depot_tools}
-    </code></pre>
+    </code>
     <p>
         Now you must ask the depot tools to "update" themselves.
         Why? I haven't the slightest idea and the Google docs
@@ -127,16 +127,16 @@
         the name of executables in <code>./depot_tools</code>
         so type this:
     </p>
-    <pre><code>
+    <code class="block">
         gclient
-    </code></pre>
+    </code>
     <p>
         On my system, this grinds away silently for quite some time,
         then gives this warning message:
     </p>
-    <pre><code>
+    <code class="block">
         WARNING: Your metrics.cfg file was invalid or nonexistent. A new one will be created.
-    </code></pre>
+    </code>
     <p>
         Hmmm, couldn't you easily distinguish an initial install from a mysteriously
         missing config file if you were a PhD programmer working at Google?
@@ -155,12 +155,12 @@
         <code>cd</code> into it,
         and run the depot tools command called <code>fetch v8</code>.
     </p>
-    <pre><code>
+    <code class="block">
         mkdir v8
         cd v8
         fetch v8
         cd v8
-    </code></pre>
+    </code>
     <p>
         After some grinding away, you have a copy of V8.
          If you're using my directory structure,
@@ -209,9 +209,9 @@
         <code>embedv8/v8/tools/dev/gm.py</code>.
         If you alias it in your shell, as Google recommends (e.g.):
     </p>
-        <pre><code>
+        <code class="block">
             alias gm=${PWD}/v8/tools/dev/gm.py
-        </code></pre>
+        </code>
     <p>
         Then the next step is to invoke it with the name of
         one of the <q>known configurations.</q>
@@ -223,9 +223,9 @@
         the covers, and <em>that</em> tool can tell you the
         list of known configurations. Like so (keep making aliases for yourself):
     </p>
-        <pre><code>
+        <code class="block">
             embedv8/v8/tools/dev/v8gen.py list
-        </code></pre>
+        </code>
     <p>
         On this particular day, <code>v8gen.py</code> claims to know
         these configuration names:

@@ -31,11 +31,11 @@ code {
 h1 {
     font-size: smaller;
 }
-pre code {
+code.block {
   background-color: #eee;
   border: 1px solid #999;
   display: block;
-  padding: 20px;
+  padding: 0;
 }
 
 code.inline {
