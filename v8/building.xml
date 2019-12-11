@@ -1,0 +1,382 @@
+<?xml version="1.0" ?>
+<Xml>
+<head>
+    <title>
+        Building the Damn Thing
+    </title>
+</head>
+<body>
+    <p>
+        V8 is a large and complex library that can be built in
+        a variety of ways.
+        Fortunately, Google gives you tools to help you build V8.
+        Unfortunately, Google gives you a shit-ton of tools to help
+        you build V8.
+        I found getting the build I wanted fairly excruciating.
+        I'm sure many people have fewer problems;
+        I see some online with similar tales of woe, however.
+        My experience may not help you, but it may help me
+        remember when I get stuck building V8 again.
+    </p>
+    <p>
+        Make sure you have a surprising amount of free disk space
+        before you start.
+        As
+        <a href="https://bugs.chromium.org/p/v8/issues/detail?id=3787">someone said</a>
+        "OUCH 2.3GB to compile 40mb worth of sources?"
+        Also make sure you have a surprising amount of free time to
+        fiddle with this incase things don't quite go your way.
+        As
+        <a href="https://bugs.chromium.org/p/v8/issues/detail?id=3787">someone said</a>
+        "all this just to compile one compoent to play around with???
+        drug addicts!!!"
+        [Disclaimer: I have no knowledge of what kind of drugs
+        the V8 developers might be addicted to.]
+    </p>
+    <h1>Google Tools</h1>
+    <p>
+        To get you started, Google has a
+        <a href="https://v8.dev/docs/embed" title="Getting started with embedding V8">guide</a>
+        which contains an
+        <a href="https://v8.dev/docs/embed#advanced-guide" title="Advanced Guide">advanced guide</a>.
+        The guide hotlinks to various other sources of information.
+    </p>
+    <p>
+        One of your tasks when installing V8 might be to decide
+        which version of V8 you want.
+        Google helpfully explains to us
+        <a href="https://v8.dev/docs/version-numbers" title="V8’s version numbering scheme">V8’s version numbering scheme</a>.
+        Eventually you might need to stick with a particular
+        version for stability,
+        not moving to newer versions without extensively testing your
+        code against them.
+        In the beginning though,
+        you might logically just want the "latest stable."
+        You will be delighted to discover this involves going to
+        a random appspot.com page, finding the latest stable
+        <emph>Chromium</emph> for your platform,
+        then finding the V8 verion associated with <emph>that</emph>.
+        That's only the start of your journey to discover how
+        to check out the latest stable version.
+        If you're doing this at 2am, you may begin to giggle.
+    </p>
+    <p>
+        One early decision you should make is your tool chain.
+        I started out trying to build with g++, but then
+        <a
+            href="https://stackoverflow.com/questions/58985987/hello-world-cc-sample-seems-to-leak-memory"
+            title="hello-world.cc sample seems to leak memory"
+        >discovered</a>
+        the V8 developers apparently use
+        <a href="https://clang.llvm.org/" title="Clang: a C language family frontend for LLVM">clang</a>'s
+        memory checker
+        tools instead of valgrind.
+        Thinking, "hell yeah, I'm gonna need a lot of memory checking,"
+        I decided to switch to clang.
+        <a
+            href="https://books.google.com/books?id=am2PXS60sy8C"
+            title="Apologies to Art Spiegelman"
+        >And here my troubles began.</a>
+    </p>
+    <p>
+        V8 is a pretty hefty download,
+        and includes its own copy of clang.
+    </p>
+    <h1>Simple Install</h1>
+    <p>
+        The default install is just a few commands...
+        yet somehow Google manages to spread them across
+        more than one web page.
+        When it comes to documentation,
+        Google sure is good at making search engines.
+        Anyway, here's my own notes.
+    </p>
+    <p>
+        Because you're not a glutton for punishment,
+        you're going to build this thing on Ubuntu
+        and just take all the defaults
+        (e.g. don't try to get a <emph>particular</emph>
+        version of V8). You can do it!
+        Create some empty directory, like
+        <code>./embedv8</code>
+        and <code>cd</code> to it.
+        First, download the funky Google "depot tools":
+    </p>
+    <pre><code>
+        git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+    </code></pre>
+    <p>
+        They will get put in <code>./depot_tools</code> and you will
+        next need to alter your PATH environment variable so executables
+        there are available to you
+        (and to them when you run them).
+    </p>
+    <pre><code>
+        export PATH=${PATH}:${$PWD/depot_tools}
+    </code></pre>
+    <p>
+        Now you have ask the depot tools to "update" themselves.
+        Why? I haven't the slightest idea and the Google docs
+        ain't gonna tell us. But OK.
+        Remember, you altered your path so that you can just type
+        the name of executables in <code>./depot_tools</code>
+        so type this:
+    </p>
+    <pre><code>
+        gclient
+    </code></pre>
+    <p>
+        On my system, this grinds away silently for quite some time,
+        then gives this warning message:
+    </p>
+    <pre><code>
+        WARNING: Your metrics.cfg file was invalid or nonexistent. A new one will be created.
+    </code></pre>
+    <p>
+        Hmmm, couldn't you easily distinguish an initial install from a mysteriously
+        missing config file if you were a PhD programmer working at Google?
+        Good question. Keep it to yourself.
+        Next (on this particular day, anyway)
+        I get a "usage" error message complaining that I've run <code>gclient.py</code>
+        without any arguments.
+        Why?
+        No idea.
+        But we must keep blindly following instructions, so onward and upward.
+    </p>
+    <p>
+        OK, now we hope the "depot tools" are happy in their new home,
+        and maybe we can actually use them.
+        So you create a directory for checking out V8,
+        <code>cd</code> into it,
+        and run the depot tools command called <code>fetch v8</code>.
+    </p>
+    <pre><code>
+        mkdir v8
+        cd v8
+        fetch v8
+        cd v8
+    </code></pre>
+    <p>
+        After some grinding away, you have a copy of V8.
+        If you're using my diretory structure,
+        then <code>embedv8</code> has two subdirectories now:
+        <code>embedv8/depot_tools</code> and
+        <code>embedv8/v8</code>.
+        If you ever need to remove everything and start over from scratch,
+        you may also want to know that you've incidentally created the
+        hidden directory
+        <code>embedv8/.cipd</code>
+        and the hidden files
+        <code>embedv8/.gclient</code> and <code>embedv8/.gclient??</code>.
+    </p>
+    <p>
+        The
+        <a href="https://v8.dev/docs/source-code" title="Checking out the V8 source code">instructions</a>
+        tell you that
+        <q>you’re intentionally in a detached head state</q>.
+        The practical effect being, I guess(?), that you have to type
+        <code>git fetch</code> instead of <code>git pull</code>
+        to bring down V8 updates.
+        But really, you're not sure exactly what version of V8 you got anyway,
+        and you have no idea if you're going to ever get any code working with V8
+        or just give up after trying,
+        so you can pretty safely ignore this issue for now.
+    </p>
+    <p>
+        Now you've successfully got a git repository (<code>embedv8/v8</code>)
+        with some unknown version of V8.
+        <q>All</q> that's left to do is build it!
+        It's time to turn the page in the
+        <a href="https://v8.dev/docs">Google V8 documentation</a>
+        to
+        <a href="https://v8.dev/docs/build-gn">Building with GN</a>.
+        As you might expect, that means you're going to be using
+        yet another tool, this one called <code>gn</code>.
+        As you might not expect, it means you might instead
+        (or in addition!) use a tool called <code>gm</code>.
+    </p>
+    <h1> The Easy Build</h1>
+    <p>
+        Recall that I'm assuming V8 has been installed in
+        <code>embedv8/v8</code>.
+        In that case, there's a tool for what Google calls
+        <q>the convenience workflow</q> in
+        <code>embedv8/v8/tools/dev/gm.py</code>.
+        If you alias it in your shell, as Google recommends (e.g.):
+        <pre><code>
+            alias gm=${PWD}/v8/tools/dev/gm.py
+        </code></pre>
+        Then the next step is to invoke it with the name of
+        one of the <q>known configurations.</q>
+    </p>
+    <p>
+        What exactly are the <q>known configurations</q> you can
+        ask <code>gm</code> to build?
+        Well, <code>gm</code> is actually using another tool under
+        the covers, and <emph>that</emph> tool can tell you the
+        list of known configurations. Like so (keep making aliases for yourself):
+        <pre><code>
+            embedv8/v8/tools/dev/v8gen.py list
+        </code></pre>
+        On this particular day, <code>v8gen.py</code> claims to know
+        these configuration names:
+    </p>
+    <pre>
+        android.arm.debug
+        android.arm.optdebug
+        android.arm.release
+        arm.debug
+        arm.optdebug
+        arm.release
+        arm64.debug
+        arm64.optdebug
+        arm64.release
+        ia32.debug
+        ia32.optdebug
+        ia32.release
+        mips64el.debug
+        mips64el.optdebug
+        mips64el.release
+        mipsel.debug
+        mipsel.optdebug
+        mipsel.release
+        ppc64.debug
+        ppc64.debug.sim
+        ppc64.optdebug
+        ppc64.optdebug.sim
+        ppc64.release
+        ppc64.release.sim
+        s390x.debug
+        s390x.debug.sim
+        s390x.optdebug
+        s390x.optdebug.sim
+        s390x.release
+        s390x.release.sim
+        x64.debug
+        x64.optdebug
+        x64.release
+        x64.release.sample
+    </pre>
+    <p>
+        I'm building and running on an x64 machine,
+        and I certainly would like any help possible debugging,
+        so my guess is I should use the configuration
+        <q>x64.debug</q>.
+        So, I type:
+        <pre><code>
+            gm x64.debug
+        </code></pre>
+        Oooops! Make sure you run that command while in the top level
+        directory of your V8 check out.
+        In the example I'm following here, that means:
+        <pre><code>
+            cd embedv8/v8
+            gm x64.debug
+        </code></pre>
+        And then stand back, and wait.
+        Takes a while to do all o' that there buildin'.
+        And then, voila!, you have built V8!
+    </p>
+    <h1>What Exactly Did You Build?</h1>
+    <p>
+        Of course, to actually write code that <emph>works with</emph>
+        the V8 library you just built,
+        you're going to need a little bit of information.
+        Let's start at the top: what compiler was used to build
+        your V8 library?
+        The answer is:  yeah, I don't know.
+        Your V8 checkout includes a clang compiler
+        (told you to have lots of disk space),
+        and you probably have g++ installed,
+        so I bet it's one of those two.
+    </p>
+    <p>
+        <code>gm</code> kindly gives some tantalizing hints about what has gone on
+        when it runs:
+        <pre>
+            # mkdir -p out/x64.debug
+            # echo &gt; out/x64.debug/args.gn &lt;&lt; EOF
+            is_component_build = true
+            is_debug = true
+            symbol_level = 2
+            target_cpu = "x64"
+            use_goma = false
+            goma_dir = "None"
+            v8_enable_backtrace = true
+            v8_enable_fast_mksnapshot = true
+            v8_enable_slow_dchecks = true
+            v8_optimized_debug = false
+            EOF
+        </pre>
+        Do you see <q>clang</q> or <q>g++</q> in there?
+        Me neither.
+        We must, alas, learn more arbitrary stuff that will
+        not make us a better person at all.
+    </p>
+    <p>
+        Under the covers, <code>gm</code> is using the lower-level tool
+        called <code>gn</code>.
+        <code>gn</code> can tell you what options were used with a particular
+        build of V8.
+        Keep in mind stuff (relative to directory structure my examples are using):
+        First, you should be in <code>embedv8/v8</code> to run
+        these V8 build tools that all reside in
+        <code>embedv8/v8/tools/dev</code>
+        (alias them all, add it to your PATH, whatever floats your bash).
+        Second, to support different side-by-side builds, the V8 build tools
+        will need to put each build in a different output directory tree;
+        for example, a build of the <q>known configuration</q> called
+        <q>x64.release</q> will be stored in the directory named:
+        <code>embedv8/v8/out/x64.release</code>.
+        Third, it is nearly logical then that the V8 build tools
+        will often want to know which build you are referring to
+        (which is maddening if you only ever have one, of course),
+        so you can expect to have to supply command-line arguments
+        like <q>out/x64.release</q>.
+    </p>
+    <p>
+        Recall, if you can remember that far back, what we were trying to do:
+        figure out exactly how the V8 library configuration named
+        <q>x64.release</q> was actually built, so we can
+        write C++ code that successfully links with it.
+        Turns out that <code>gn</code> records what options
+        it used on a given build, and can inform us of them.
+        It does this via the <q>args</q> command.
+        If you type:
+        <pre><code>
+            gn args out/x64.release
+        </code></pre>
+        it will open up an editor (which probably isn't your favorite editor,
+        so make sure you know how to exit all 237 editors that Linux supports)
+        of a file containing...
+        the same output from <code>gm</code> that didn't even tell us
+        which damn compiler was used.
+        Ha ha! You need a command-line option:
+        <pre><code>
+            gn args out/x64.release --list
+        </code></pre>
+        You're going to want to pipe this into <code>less</code> because
+        the output is:
+        <b>a gajillion possible build options, along with what value they were set to
+        in the named build, along with a brief explanation of what they mean</b>.
+        Sooo many options, about 50KB.
+    </p>
+    <p>
+        So if I search for <q>clang</q> in the resulting spew,
+        I find many options I don't care about, but eventually I find this text:
+        <pre>
+is_clang
+    Current value (from the default) = true
+      From //build/config/BUILDCONFIG.gn:137
+
+    Set to true when compiling with the Clang compiler.
+        </pre>
+        Since the value is <q>true</q>, my build apparently used the clang
+        compiler.
+        I interpret <q>from the default</q> to mean that there is a giant list
+        of default values somewhere that I can't find,
+        and the default was not overridden in this build.
+    </p>
+</body>
+</Xml>
+

@@ -30,8 +30,30 @@ function YesNo() {
 }
 
 
-# show git status
+# check for untracked files
+declare -a Untracked
+declare -i count=0
+while read -r line
+do
+    if [[ $line == "??"* ]]; then
+        ((++count))
+        Untracked+=("${line:3}")
+        echo "$line"
+    fi
+done < <(git status --porcelain 2>/dev/null);
+
+if [ $count -gt 0 ]; then
+    if YesNo "Shall I add these untracked files?"; then
+        for file in "${Untracked[@]}"; do
+            echo git add "$file"
+            git add "$file"
+        done
+    fi
+fi
+
+
 git status
+
 # check for changed files
 if git diff-index --quiet HEAD --; then
     echo "No uncommitted changes."
