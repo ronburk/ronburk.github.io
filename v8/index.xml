@@ -41,6 +41,12 @@
         you may notice that Google's search results are littered
         with helpful links to version 8 of completely unrelated
         products.
+        Perhaps most hilarious is the fact that a key V8 build tool
+        is called <code>gm</code>,
+        so when you try to search for its documentation by typing
+        <q>v8 gm</q> into Google,
+        you get all kinds of information about the 8-cylinder
+        automobile engines made by General Motors.
         Possibly there should be an internal Google employee
         class on how to pick names that are, you know,
         easy to locate with Google.
