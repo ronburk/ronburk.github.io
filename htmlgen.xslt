@@ -140,6 +140,9 @@ li.collapse input:checked ~ label::before {
     .main {
       grid-area: main;
       background-color: #8fd4d9;
+      padding-left: 1.5em;
+      padding-right: 2em;
+      padding-bottom: 2em;
     }
 
     .footer {
@@ -300,12 +303,13 @@ li.collapse input:checked ~ label::before {
     <xsl:document href="{@output}" method="html" indent="yes">
         <html>
         <head>
-        <style>
-            <xsl:value-of select="$main.css"/>
-            <xsl:value-of select="$sidenav.css"/>
-            <xsl:value-of select="$menu.css"/>
-            <xsl:value-of select="$headerfooter.css"/>
-        </style>
+            <style>
+                <xsl:value-of select="document('style.css')"/>
+                <xsl:value-of select="$main.css"/>
+                <xsl:value-of select="$sidenav.css"/>
+                <xsl:value-of select="$menu.css"/>
+                <xsl:value-of select="$headerfooter.css"/>
+            </style>
         <script>
             function InitNav(){
                 //document.getElementsByClassName("open-on-load").checked = true;
