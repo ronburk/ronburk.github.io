@@ -26,24 +26,29 @@
 
 <xsl:variable name="style.css">
 code {
-    font-size: bigger;
+    font-size: .8rem;
 }
 h1 {
-    font-size: smaller;
+    font-size: 1.2rem;
 }
 code.block {
-  background-color: #eee;
-  border: 1px solid #999;
-  display: block;
-  padding: 0;
+    background-color: #BBB;
+    border: 1px solid #999;
+    display: block;
+    font-family: monospace;
+    padding: .2em;
+    white-space: pre;
 }
 
 code.inline {
     display: block;
     font-family: monospace;
     white-space: pre;
-}
-    
+    }
+p {
+    margin-top: 12px;
+    margin-bottom: 12px;
+}    
 </xsl:variable>
 <xsl:variable name="menu.css">
 

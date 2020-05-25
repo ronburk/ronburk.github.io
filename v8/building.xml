@@ -320,7 +320,7 @@
         Do you see <q>clang</q> or <q>g++</q> in there?
         Me neither.
         We must, alas, learn more arbitrary stuff that will
-        not make us a better person at all.
+        not make us better programmers at all.
     </p>
     <p>
         Under the covers, <code>gm</code> is using the lower-level tool
@@ -393,6 +393,148 @@ is_clang
         I interpret <q>from the default</q> to mean that there is a giant list
         of default values somewhere that I can't find,
         and the default was not overridden in this build.
+    </p>
+    <p>
+        Remember, V8 installed its own clang compiler and that's the one it used.
+        So even if you have your own clang installed,
+        better play it safe and use the one that built your V8 library.
+        If you want to end up with a <code>Makefile</code> like I do,
+        you'll need to know that C++ compiler lives at:
+        <code class="inline">
+            embedv8/v8/third_party/llvm-build/Release+Asserts/bin/clang++
+        </code>
+    </p>
+    <h1>Where's That Library?</h1>
+    <p>
+        We keep calling V8 a <q>library</q> so the next logical question
+        after figuring out what compiler to use is
+        <q>exactly where is the library I should link to?</q>
+        It's surely either a shared library (<code>.so</code>) or a
+        static library (<code>.a</code>), and we know it
+        has to be in the output directory of the build, so let's just do a find:
+        <code class="inline">
+ronburk@ronburk-OptiPlex-9020:~/src$ cd embedv8/v8/out/x64.release/
+ronburk@ronburk-OptiPlex-9020:~/src/embedv8/v8/out/x64.release$ find . -iname "*.so"
+ronburk@ronburk-OptiPlex-9020:~/src/embedv8/v8/out/x64.release$ 
+        </code>
+        OK, there's no shared library of any kind, so try a static library:
+        <code class="inline">
+ronburk@ronburk-OptiPlex-9020:~/src/embedv8/v8/out/x64.release$ find . -iname "*.a"
+./obj/third_party/zlib/libchrome_zlib.a
+./obj/third_party/icu/libicuuc.a
+./obj/third_party/icu/libicui18n.a
+./obj/libv8_libplatform.a
+./obj/libv8_libbase.a
+        </code>
+        The <code>third_party</code> libraries surely ain't it, so we have
+        <code>libv8_libplatform.a</code> and <code>libv8_libbase.a</code>.
+        I have a bad feeling about this, so let's look at them closer:
+        <code class="inline">
+ronburk@ronburk-OptiPlex-9020:~/src/embedv8/v8/out/x64.release$ cd obj
+ronburk@ronburk-OptiPlex-9020:~/src/embedv8/v8/out/x64.release/obj$ ls -al *.a
+-rw-r--r-- 1 ronburk ronburk 24208 Dec 10 16:13 libv8_libbase.a
+-rw-r--r-- 1 ronburk ronburk 23262 Dec 10 16:13 libv8_libplatform.a
+        </code>
+        Yeah, those aren't nearly big enough to contain the huge V8 codebase.
+        Against all expectation, the build configuration instructions
+        sold to us as easy/default do not actually
+        build a V8 library for us to link against!
+    </p>
+    <p>
+        This stumped me for a while. Then I realized that the V8 build comes
+        with tests and sample programs and asked myself
+        <q>Well, how in the hell are they linking?</q>
+        After tedious poking around, I concluded what I found difficult to believe was true:
+        <b>they statically link with all the individual V8 object files.</b>
+    </p>
+    <h1>Customizing the Build</h1>
+    <p>
+        By now, I had spent days on what I expected to take an hour or two.
+        With so much invested, I wasn't about to give up now,
+        so I grit my teeth and decided not to quit until I had V8 in
+        a library that I could build against with a simple <code>Makefile</code>.
+        My goal was a single static library (<code>.a</code>) with debug
+        symbols that I could easily link against.
+        I eventually ended up with this set of build options:
+        <code class="inline">
+    "is_lsan=true"
+    "is_asan=true"
+    "is_debug=true"
+    'target_cpu="x64"'
+    "is_component_build=false"
+    "v8_monolithic=true"
+    "v8_use_external_startup_data=true"
+    "is_clang=true"
+        </code>
+        The intent was to get clang debugging features <q>LeakSanitizer</q> and
+        <q>AddressSanitizer</q> enabled,
+        debugging symbols included, and everything put into a single library
+        (which isn't quite possible, because <q>libplatform</q> is for some
+        reason treated as not quite a part of the V8 library, even though
+        many applications that embed V8 will want it).
+    </p>
+    <p>
+        The <q>v8_use_external_startup_data</q> option I believe constructs
+        two <code>.bin</code> files containing pre-constructed work that V8
+        can load at startup to save time.
+        <a href="https://stackoverflow.com/questions/38048888/how-to-build-v8-without-external-startup-data">This page</a> claims V8 startup is now dramatically worse without them,
+        so I enabled this option.
+        <a href="https://v8.dev/blog/custom-startup-snapshots">This V8 blog post</a>
+        says you can even build your own customized startup snapshot binaries.
+        The Electron team
+        <a href="https://blog.atom.io/2017/04/18/improving-startup-time.html">found
+        this non-trivial</a>.
+    </p>
+    <p>
+        And, even though you want the build option <code>v8_monolithic=true</code>
+        if you're trying to get V8 into one big static library,
+        the build tool forbids you to combine that with
+        <code>v8_use_external_startup_data=true</code>
+        because
+        <q> Using external startup data would produce separate files.</q>
+        Hmmm.
+    </p>
+    <p>
+        I called my custom configuration simply <q>debug</q> and stored
+        it in the <code>embedv8/v8/out/debug</code> directory.
+        To get a custom build using the above build flags required these commands:
+        <code class="inline">
+            cd embedv8/v8
+            gn gen out/debug --args="... insert build flags here..."
+            ninja -C out/debug
+        </code>
+        Obviously, you have to insert the list of build flags in the right place
+        and get all the shell quoting right.
+        And (sigh) the tool has its own quoting demands;
+        for example, it seems to get upset if the
+        <code>--args</code> string contains
+        <code>target_cpu=x64</code> instead of 
+        <code>target_cpu="x64"</code>.
+        Of course, I use a script instead of trying this by hand.
+    </p>
+    <h1>A V8 Install/Build Script</h1>
+    <p>
+        To have a reproducible process, all the choices discussed so far
+        (and some to come)
+        are captured in a script named
+        <a href="https://github.com/ronburk/embedv8/blob/master/src/initv8.sh">initv8.sh</a>
+        that I store in <code>embedv8/src/initv8.sh</code>.
+        This script can be invoked one of two ways.
+        When invoked as:
+        <code class="inline">
+            cd embedv8
+            bash src/initv8.sh
+        </code>
+        it performs a complete install and build of <code>depot_tools</code> and
+        V8.
+        When invoked as:
+        <code class="inline">
+            cd embedv8
+            . src/initv8.sh
+        </code>
+        it merely modifies the bash environment.
+        To wit, it adds the depot tools to your PATH and
+        creates bash aliases for things like the <code>gm</code> and <code>gn</code> commands.
     </p>
 </body>
 </Xml>
