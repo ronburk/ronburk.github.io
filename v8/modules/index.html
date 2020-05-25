@@ -161,7 +161,7 @@ li.collapse input:checked ~ label::before {
 <body>
 <div class="grid-container">
 <header class="header">
-        Stumbling Around V8
+        Modules
     </header>
 <aside class="sidenav">
 <ul id="menutree"><li class="collapse">
@@ -177,7 +177,7 @@ li.collapse input:checked ~ label::before {
         Building the Damn Thing
     </a></li>
         <li class="collapse">
-<input type="checkbox" id="idp3"><label for="idp3"></label><a href="/v8/modules/index.html">
+<input type="checkbox" id="idp3" class="open-on-load"><label for="idp3"></label><a href="/v8/modules/index.html">
         Modules
     </a><ul>
         </ul>
@@ -188,69 +188,40 @@ li.collapse input:checked ~ label::before {
 </li></ul>
 </aside>
 <main class="main"><p>
-        <a href="https://github.com/v8/v8" title="The official mirror of the V8 Git repository">V8</a>
-        is Google's
-        JavaScript engine.
-        It is notably used inside of Google's Chrome
-        web browser, Node.js, and Electron.
+        Like most simple languages that evolve to support larger and more complex programs,
+        JavaScript has struggled with an ever-increasing need for features
+        to support modularity.
+        Various product-specific precursors like
+        <a href="https://nodejs.org/">Node</a>'s
+        "<a href="https://nodejs.org/en/knowledge/getting-started/what-is-require/">require</a>"
+        mechanism became formalized in the ECMAScript standard as
+        "<a href="https://www.ecma-international.org/ecma-262/#sec-modules">modules</a>".
     </p>
 <p>
-        As an open-source C++ library,
-        V8 could theoretically be used by any
-        C++ programming project that wants to embed
-        a JavaScript interpreter.
-        In practice, however, using V8 is pretty
-        non-trivial.
-        The documentation is, to be charitable,
-        sparse.
-        These pages record my efforts to understand
-        V8.
-        Feel free to let me know what-all I've gotten
-        wrong.
-        I guess you could do it in the form of an "issue" over
-        <a href="https://github.com/ronburk/ronburk.github.io/issues">here</a>
-        and that way it would only consume my attention if I'm
-        still alive and using github at all.
+        To be generally embeddable, V8 has to support ECMAScript modules,
+        but give the embedder (the "host environment") the ability to customize such tasks
+        as loading the text of modules to be compiled.
+        Keep in mind what the language specification says:
+        <blockquote>
+            there are no provisions in this specification for input of external data or output of computed results.
+        </blockquote>
+        Like nearly everything that is not a pure execution of Javascript computation,
+        such things are left to the host environment which,
+        if you writing C++ that calls V8,
+        means <em>you</em> are responsible for writing that code.
     </p>
-<p>
-        There are many reasons to giggle while beating your head
-        against V8,
-        but the top-most reason is the name itself.
-        A search engine company names their product "V8".
-        As a result, as you try to use Google to locate crucial
-        help in using V8,
-        you may notice that Google's search results are littered
-        with helpful links to version 8 of completely unrelated
-        products.
-        Perhaps most hilarious is the fact that a key V8 build tool
-        is called <code>gm</code>,
-        so when you try to search for its documentation by typing
-        <q>v8 gm</q> into Google,
-        you get all kinds of information about the 8-cylinder
-        automobile engines made by General Motors.
-        Possibly there should be an internal Google employee
-        class on how to pick names that are, you know,
-        easy to locate with Google.
-    </p>
-<p><a href="/v8/threads.html">
-        V8: Single- and Multi-Threaded
-    </a></p>
-<p><a href="/v8/building.html">
-        Building the Damn Thing
-    </a></p>
-<p><a href="/v8/modules/index.html">
-        Modules
-    </a></p>
 </main>
-<footer class="footer"><div>NEXT: <a href="/v8/threads.html">
-        V8: Single- and Multi-Threaded
-    </a>
-</div>
+<footer class="footer"><div></div>
 <div>
             UP:
-            <a href="/index.html">Ron Burk github pages</a>
+            <a href="/v8/index.html">
+        Stumbling Around V8
+    </a>
 </div>
-<div></div></footer>
+<div>PREV: <a href="/v8/building.html">
+        Building the Damn Thing
+    </a>
+</div></footer>
 </div>
 </body>
 </html>

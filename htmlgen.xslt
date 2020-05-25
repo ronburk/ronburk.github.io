@@ -407,9 +407,6 @@ li.collapse input:checked ~ label::before {
 </xsl:template>
 
 
-<xsl:template name="emitfooter">
-</xsl:template>
-
 <!-- DoDir: scan each Index's children, recurse on other Index'es -->
 <xsl:template name="DoDir">
     <xsl:param name="ParentPath"/>

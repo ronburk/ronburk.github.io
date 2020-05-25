@@ -16,13 +16,15 @@
         so your V8 application will be multi-threaded.
         You get some control over how many "extra" threads are started,
         but it can't be zeo.
-        See <a href="https://stackoverflow.com/questions/56118604/wanting-to-understand-purpose-and-count-of-v8s-workerthreads">this StackOverflow question</a>.
+        See <a href="https://stackoverflow.com/questions/56118604/wanting-to-understand-purpose-and-count-of-v8s-workerthreads">Wanting to understand purpose and count of V8's WorkerThread(s)</a>.
     </p>
     <p>
         To be clear,
         <a href="https://www.ecma-international.org/ecma-262/5.1/">ECMAScript</a> is single-threaded,
         so V8's implementation of that language
         is likely to always be as well.
+        Put another way,
+        ECMAScript has no provisions for 
         As <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop">this overview</a> implies,
         combining a single-threaded interpreted language
         with the ability to hand off I/O bound tasks to the external
