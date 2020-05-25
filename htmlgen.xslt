@@ -138,6 +138,26 @@ li.collapse input:checked ~ label::before {
 
 </xsl:variable>
 
+<xsl:variable name="blockquote.css">
+blockquote {
+  background: #f9f9f9;
+  border-left: 10px solid #ccc;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+  quotes: "\201C""\201D""\2018""\2019";
+}
+blockquote:before {
+  color: #ccc;
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+}
+blockquote p {
+  display: inline;
+}
+</xsl:variable>
 <xsl:variable name="main.css">
     /* Simple dashboard grid CSS */
 
@@ -337,6 +357,7 @@ li.collapse input:checked ~ label::before {
                 <xsl:value-of select="$sidenav.css"/>
                 <xsl:value-of select="$menu.css"/>
                 <xsl:value-of select="$headerfooter.css"/>
+                <xsl:value-of select="$blockquote.css"/>
             </style>
         <script>
             function InitNav(){

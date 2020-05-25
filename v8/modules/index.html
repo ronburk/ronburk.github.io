@@ -146,6 +146,25 @@ li.collapse input:checked ~ label::before {
     padding: 0 16px;
     background-color: #648ca6;
   }
+
+blockquote {
+  background: #f9f9f9;
+  border-left: 10px solid #ccc;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+  quotes: "\201C""\201D""\2018""\2019";
+}
+blockquote:before {
+  color: #ccc;
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+}
+blockquote p {
+  display: inline;
+}
 </style>
 <script>
             function InitNav(){
@@ -201,7 +220,8 @@ li.collapse input:checked ~ label::before {
         To be generally embeddable, V8 has to support ECMAScript modules,
         but give the embedder (the "host environment") the ability to customize such tasks
         as loading the text of modules to be compiled.
-        Keep in mind what the language specification says:
+        Keep in mind what the language
+        <a href="https://www.ecma-international.org/ecma-262/#sec-overview">specification says</a>:
         <blockquote>
             there are no provisions in this specification for input of external data or output of computed results.
         </blockquote>

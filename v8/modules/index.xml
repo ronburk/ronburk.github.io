@@ -20,7 +20,8 @@
         To be generally embeddable, V8 has to support ECMAScript modules,
         but give the embedder (the "host environment") the ability to customize such tasks
         as loading the text of modules to be compiled.
-        Keep in mind what the language specification says:
+        Keep in mind what the language
+        <a href="https://www.ecma-international.org/ecma-262/#sec-overview">specification says</a>:
         <blockquote>
             there are no provisions in this specification for input of external data or output of computed results.
         </blockquote>

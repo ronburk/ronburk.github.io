@@ -20,11 +20,14 @@
     </p>
     <p>
         To be clear,
-        <a href="https://www.ecma-international.org/ecma-262/5.1/">ECMAScript</a> is single-threaded,
+        <a href="https://www.ecma-international.org/ecma-262/5.1/">ECMAScript</a> is implicitly single-threaded,
         so V8's implementation of that language
         is likely to always be as well.
-        Put another way,
-        ECMAScript has no provisions for 
+        IOW (caveats to follow),
+        your JavaScript code is always executing a single thread of control
+        and doesn't have to worry about synchronizing access any of its data,
+        no matter how much it <em>feels</em> like dozens of snippets of
+        your code are working on dozens of (e.g., HTTP) requests <q>at the same time.</q>
         As <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop">this overview</a> implies,
         combining a single-threaded interpreted language
         with the ability to hand off I/O bound tasks to the external
@@ -34,7 +37,7 @@
         If JavaScript had threads, node.js would never have
         gotten off the ground.
         Protecting the masses of programmers from multi-threading
-        is more important than protecting them from memory management.
+        is even more important than protecting them from memory management.
         As Gordon Bell warns,
         <a href="https://tinyurl.com/BellOnThreads"
            >Parallelism is more difficult to implement than
