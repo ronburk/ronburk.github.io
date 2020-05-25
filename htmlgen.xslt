@@ -326,6 +326,7 @@ li.collapse input:checked ~ label::before {
         </xsl:for-each>
     </xsl:variable>
     
+
     <!-- create output HTML file here -->
     <xsl:document href="{@output}" method="html" indent="yes">
         <html>
@@ -361,22 +362,12 @@ li.collapse input:checked ~ label::before {
                     </xsl:apply-templates>
                 </ul><xsl:text>&#10;</xsl:text>
                 </aside><xsl:text>&#10;</xsl:text>
-                <main class="main">
+                <main class="main"> <!-- main text plus child links -->
                     <xsl:apply-templates
                         select="document(@input)/Xml/body/*"/>
-                    <xsl:if test="@href">
-                        <xsl:for-each select="*">
-                            <xsl:variable name="Title"
-                                select="document(@input)/Xml/head/title"
-                                          />
-                            <p>
-                                <a href="{func:GetPath(.)}">
-                                    <xsl:value-of select="$Title"/>
-                                </a>
-                            </p>
-                        </xsl:for-each>
-                    </xsl:if>
+                    <xsl:call-template name="childlinks" />
                 </main>
+                <xsl:text>&#10;</xsl:text>
                 <footer class="footer">
                     <div>
                         <xsl:copy-of select="$NEXT"/>
@@ -394,6 +385,29 @@ li.collapse input:checked ~ label::before {
         </body>
         </html>
     </xsl:document>
+</xsl:template>
+
+<!-- childlinks - the links to children that follow main body text
+-->
+<xsl:template name="childlinks">
+    <xsl:if test="@href">
+        <xsl:for-each select="*">
+            <xsl:variable name="Title"
+                          select="document(@input)/Xml/head/title"
+                          />
+            <p>
+<!--                <a href="{func:GetPath(.)}"> -->
+                <a href="{@abs}">
+                    <xsl:value-of select="$Title"/>
+                </a>
+            </p>
+        </xsl:for-each>
+        <xsl:text>&#10;</xsl:text>
+    </xsl:if>
+</xsl:template>
+
+
+<xsl:template name="emitfooter">
 </xsl:template>
 
 <!-- DoDir: scan each Index's children, recurse on other Index'es -->
