@@ -1,0 +1,390 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style>
+code {
+    font-size: .8rem;
+}
+h1 {
+    font-size: 1.2rem;
+}
+code.block {
+    background-color: #BBB;
+    border: 1px solid #999;
+    display: block;
+    font-family: monospace;
+    padding: .2em;
+    white-space: pre;
+}
+
+code.inline {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    }
+p {
+    margin-top: 12px;
+    margin-bottom: 12px;
+}    
+
+    /* Simple dashboard grid CSS */
+
+    /* Assign grid instructions to our parent grid container */
+    .grid-container {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      grid-template-rows: 50px 1fr 50px;
+      grid-template-areas:
+        "sidenav header"
+        "sidenav main"
+        "sidenav footer";
+      height: 100vh;
+    }
+
+    /* Give every child element its grid name */
+    .header {
+      grid-area: header;
+      background-color: #648ca6;
+    }
+
+    .sidenav {
+      grid-area: sidenav;
+      background-color: #394263;
+    }
+
+    .main {
+      grid-area: main;
+      background-color: #8fd4d9;
+      padding-left: 1.5em;
+      padding-right: 2em;
+      padding-bottom: 2em;
+    }
+
+    .footer {
+      grid-area: footer;
+      background-color: #648ca6;
+    }
+
+  .sidenav {
+    display: flex; /* Will be hidden on mobile */
+    flex-direction: column;
+    grid-area: sidenav;
+    background-color: #394263;
+  }
+  .sidenav__list {
+    padding: 0;
+    margin-top: 85px;
+    list-style-type: none;
+  }
+  .sidenav__list-item {
+    padding: 20px 20px 20px 40px;
+    color: #ddd;
+  }
+  .sidenav__list-item:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+  }
+
+
+
+/* [COLLAPSIBLE] */
+#menutree label {
+  position: relative;
+  display: block;
+  width: 100%;
+  cursor: pointer;
+}
+#menutree {
+  list-style-type: none;
+  padding-left: 3px;
+  margin: 0;
+  font-size: smaller;
+}
+
+#menutree, #menutree ul {
+  list-style-type: none;
+  padding-left: 1em;
+  margin: 0;
+}
+#menutree input[type=checkbox] {
+  display: none; /* Hide ugly checkbox */
+}
+
+#menutree a, #menutree a:visited {
+  color: white;
+  text-decoration: none;
+}
+/* Hide/collapse by default */
+li.collapse ul {
+  visibility: hidden;
+  opacity: 0;
+  max-height: 0; /* CSS bug. Cannot animate height... */
+  transition: all 0.5s;
+}
+label::before {
+  content: "\25b6";
+  position: absolute;
+  top: 0;
+  right: 0;
+  transition: all 0.5s;
+}
+
+/* Show when checked */
+li.collapse input:checked ~ ul {
+  visibility: visible;
+  opacity: 1;
+  max-height: 999px; /* Just give a big enough height for animation */
+}
+li.collapse input:checked ~ label::before {
+  transform: rotate(90deg);
+  }
+
+  .header, .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    background-color: #648ca6;
+  }
+
+blockquote {
+  background: #f9f9f9;
+  border-left: 10px solid #ccc;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+  quotes: "\201C""\201D""\2018""\2019";
+}
+blockquote:before {
+  color: #ccc;
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+}
+blockquote p {
+  display: inline;
+}
+</style>
+<script>
+            function InitNav(){
+                //document.getElementsByClassName("open-on-load").checked = true;
+                let nodes = document.getElementsByClassName("open-on-load");
+                for(let i = 0; i < nodes.length; ++i){
+                    nodes[i].click();
+                    }
+                }
+                window.onload = InitNav;
+        </script>
+</head>
+<body>
+<div class="grid-container">
+<header class="header">
+        Language Specification Says...
+    </header>
+<aside class="sidenav">
+<ul id="menutree"><li class="collapse">
+<input type="checkbox" id="idp1" class="open-on-load"><label for="idp1"></label><a href="/index.html">Ron Burk github pages</a><ul>
+    <li class="collapse">
+<input type="checkbox" id="idp2" class="open-on-load"><label for="idp2"></label><a href="/v8/index.html">
+        Stumbling Around V8
+    </a><ul>
+        <li><a href="/v8/threads.html">
+        V8: Single- and Multi-Threaded
+    </a></li>
+        <li><a href="/v8/building.html">
+        Building the Damn Thing
+    </a></li>
+        <li class="collapse">
+<input type="checkbox" id="idp3" class="open-on-load"><label for="idp3"></label><a href="/v8/modules/index.html">
+        Modules
+    </a><ul>
+            <li><a href="/v8/modules/spec-says.html">
+        Language Specification Says...
+    </a></li>
+        </ul>
+</li>
+    </ul>
+</li>
+</ul>
+</li></ul>
+</aside>
+<main class="main"><p>
+        Before writing your code to handle V8 modules,
+        it's useful to know what the language specification says.
+        That not only makes it somewhat less unclear why the V8
+        code is structured that way,
+        but even makes the naming of V8 objects/functions/structure
+        somewhat less opaque.
+        For example, seeing the name <q>specifier</q> is less vague
+        if you're aware that's the nomenclature used in the
+        <a href="https://www.ecma-international.org/ecma-262/#sec-hostresolveimportedmodule">ECMAScript
+        specification</a>.
+    </p>
+<h1>Lexical Environment</h1>
+<p>
+        Recall that JavaScript has nested lexical scopes,
+        which the language specification calls
+        <a href="https://www.ecma-international.org/ecma-262/#sec-lexical-environments">Lexical Environments</a>.
+        Each lexical environment conceptually has a pointer to its outer/parent environment.
+        So when the compiler tries to figure out what a symbol refers to,
+        it looks for a definition in the current lexical environment,
+        then its parent environment, then the parent of that environment, and so on.
+    </p>
+<p>
+        Eventually, of course, one finds an environment that has no parent environment,
+        and that is deemed the
+        <a href="https://www.ecma-international.org/ecma-262/#global-environment">global environment</a>.
+        This is pretty closely tied to the one-and-only
+        <a href="https://www.ecma-international.org/ecma-262/#sec-global-object">global object</a>
+        of course, that is created before any JavaScript executes.
+    </p>
+<p>
+        The top-level scope in a "script" (JavaScript code that is not in a module) is essentially global.
+        But the key difference with a module is that the module itself represents a lexical environment
+        (whose parent is the global environment).
+        That means nothing you declare in the module is going to clutter up the
+        long-suffering global scope.
+        If you want to allow an object/function in the module to be accessed outside the module,
+        you must explicitly declare that with an export statement.
+        If you want your code to "see" an object/function from another module,
+        you must explicitly cause that to happen with an import statement.
+    </p>
+<h1>Realms == Contexts, or Maybe Close Enough</h1>
+<p>
+        The ECMAScript specification defines
+        <a href="https://www.ecma-international.org/ecma-262/#sec-code-realms">realms</a>,
+        which basically are distinct instances of JavaScript that can only communicate via
+        well-defined means.
+        I would like to say that ECMAScript realms are identical to V8
+        <a href="https://v8.dev/docs/embed#contexts">contexts</a>
+        but that seems optimistic, so let's just say they're close to the same thing.
+    </p>
+<p>
+        You will care about this because the top-level code in each module must be
+        executed no more than once for any given realm/context.
+        To be explicit, consider a dummy module:
+        <pre><code>
+            // mymodule.js
+            let PI = 3.14;
+            export function TwoPI(){ return PI * 2; }
+            export function CircleArea(radius) { return PI * radius * radius; }
+        </code></pre>
+        When this module gets executed
+        (e.g., because some other code references <q>mymodule.js</q> with an import statement),
+        it creates and intializes a variable and two functions.
+        Those two functions are then available to be called from code outside
+        this module.
+        But (assuming the same context/realm) if the JavaScript compiler later
+        runs into another import statement that refers to <q>mymodule.js</q>,
+        your code is going to have to notice that you already loaded that module
+        and it should not get executed again.
+    </p>
+<h1>Module Import Recursion</h1>
+<p>
+        If you make a graph with JavaScript modules as nodes and
+        viewing their contained import statements as "arrows"
+        pointing at other nodes,
+        you can end up with cycles in your graph.
+        A simple example is you import "a.js" which itself
+        imports "b.js", which in turn happens to be
+        importing some functions from "a.js".
+        This is another reason you will be writing code that detects
+        when a module has already been loaded.
+    </p>
+<p>
+        The first time JavaScript encounters an "import" statement,
+        that could lead to a pretty long list of modules to import.
+        In other words, the first module may import from other modules
+        that in turn import from still other modules.
+        This is most naturally defined as a recursive process that
+        stops recursing when it hits modules that import no
+        modules that have not already been loaded.
+        However, just to be contrary, I will implement a non-recursive
+        module load.
+    </p>
+<h1>Specifiers and Ambiguity</h1>
+<p>
+        As mentioned before, the ECMAScript specification is insulated
+        from the outside world of files, URLs, etc. Those are your responsibility
+        as the coder providing the host environment for V8.
+        An import statement refers to a module via a string,
+        which the
+        <a href="https://www.ecma-international.org/ecma-262/#sec-hostresolveimportedmodule">specification calls a "specifier"</a>.
+        You will have to write code that, given one of those strings,
+        brings the associated module text into memory and hands it to V8.
+        That could be as simple as reading a file, or you might need to also
+        be able to fetch URLs from across the web, or any other mechanism
+        for storing the text of modules.
+        For example, my particular application allows JavaScript no unfettered
+        access to either a filesystem or the web,
+        and I will be translating the "specifier" string into
+        a database request, since all my module source code will be
+        residing in an SQL database.
+    </p>
+<p>
+        Since modules are meant to be loaded only once,
+        you are also in charge of handling the potential problem of different
+        specifiers referring to the exact same module.
+        For example, are "mymodule.mjs" and "MyModule.mjs" specifiers
+        for the exact same module?
+        Your intuitive answer may vary depending on whether you are accustomed
+        to a Windows (case-insensitive filesystem) or *nix (case-sensitive filesystem) environment.
+        Are "mymodule.mjs" and "./mymodule.mjs" specifiers that
+        all refer to the same module?
+        They will be if you are mapping specifiers directly onto a typical filesystem,
+        which means your code has to notice that they both refer to the same module
+        and not accidentally load another copy.
+        Note that a module might contain some state crucial to its operation,
+        and creating two copies may result in a mystifying bug at the JavaScript level.
+    </p>
+<p>
+        There are slightly different rules for modules and the more traditional
+        JavaScript container which the
+        <a href="https://www.ecma-international.org/ecma-262/#sec-ecmascript-language-scripts-and-modules">specification calls a "script."</a>
+        Any code being run as the result of an "import" statement is presumably a module.
+        But your code will need to decide whether (at least) that first chunk of code you
+        are going to run is a "script" or a "module".
+        Existing products adapting to the introduction of modules may have to
+        use conventions, like "a .mjs extension means it's a module."
+        I'm making a new project with no allegiance to any existing code,
+        so I say the hell with that problem and I will assume everything
+        I load for V8 to compile is going to be a module.
+        Let's be modern and cool!
+    </p>
+<h1>Module Unload</h1>
+<p>
+        AFAIK, the language specification includes no notion of removing
+        a module from memory after it has been imported. Unloading was
+        a feature possible with Node's neo-module mechanism, "require."
+        One might want such a thing for testing frameworks, and also
+        during development when changed modules can be automatically detected
+        and reloaded without having to shutdown and restart.
+    </p>
+<p>
+        Currently (spring 2020) this seems to be an
+        <a href="https://github.com/nodejs/modules/issues/307">open issue</a>
+        for Node.
+        Is it important for your project?
+        Something to think about.
+        You might consider architectures in which it is possible
+        to easily spin up a separate context, isolate, or Web Worker thread
+        just for the purpose of loading a new or updated module.
+        The idea being you could then easily terminate that context/isolate/thread
+        in order to accomplish "unloading."
+        That's a much larger granularity than just unloading a single
+        module, of course, but also a much more tested scenario than
+        any per-module unloading hack you might devise for the current V8.
+    </p>
+</main>
+<footer class="footer"><div></div>
+<div>
+            UP:
+            <a href="/v8/modules/index.html">
+        Modules
+    </a>
+</div>
+<div></div></footer>
+</div>
+</body>
+</html>
