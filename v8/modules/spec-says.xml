@@ -18,6 +18,14 @@
         <a href="https://www.ecma-international.org/ecma-262/#sec-hostresolveimportedmodule">ECMAScript
         specification</a>.
     </p>
+    <h1>But Even Better</h1>
+    <p>
+        When I was finishing up this page, I discovered that
+        <a href="https://twitter.com/linclark">Lin Clark</a>
+        did a
+        <a href="https://hacks.mozilla.org/2018/03/es-modules-a-cartoon-deep-dive/">lovely exposition of modules</a>
+        that's a really painless way to learn the mechanics at the language level.
+    </p>
     <h1>Lexical Environment</h1>
     <p>
         Recall that JavaScript has nested lexical scopes,
@@ -43,9 +51,9 @@
         That means nothing you declare in the module is going to clutter up the
         long-suffering global scope.
         If you want to allow an object/function in the module to be accessed outside the module,
-        you must explicitly declare that with an export statement.
+        you must explicitly declare that with an <code>export</code> statement.
         If you want your code to "see" an object/function from another module,
-        you must explicitly cause that to happen with an import statement.
+        you must explicitly cause that to happen with an <code>import</code> statement.
     </p>
     <h1>Realms == Contexts, or Maybe Close Enough</h1>
     <p>
@@ -63,19 +71,42 @@
         To be explicit, consider a dummy module:
         <pre><code>
             // mymodule.js
-            let PI = 3.14;
-            export function TwoPI(){ return PI * 2; }
-            export function CircleArea(radius) { return PI * radius * radius; }
+            let MAX   = 3;
+            let count = 0;
+            function Take() {
+                if(++count &gt; MAX)
+                    throw "You've taken too much!";
+                else
+                    return count;
+                }
+            function Give() {
+                if(--count &lt; 0)
+                    throw "You've given too much!";
+                else
+                    return count;
+                }
+            export Take, Give
         </code></pre>
         When this module gets executed
         (e.g., because some other code references <q>mymodule.js</q> with an import statement),
-        it creates and intializes a variable and two functions.
+        it creates and intializes two variables and two functions.
         Those two functions are then available to be called from code outside
         this module.
+        You can see that it is intended that
+        <code>Take()</code> cannot be called more than 3 times in a row without
+        calling <code>Give()</code>.
         But (assuming the same context/realm) if the JavaScript compiler later
         runs into another import statement that refers to <q>mymodule.js</q>,
         your code is going to have to notice that you already loaded that module
         and it should not get executed again.
+        If you load this module a second time when it is imported by
+        some other code,
+        then <code>Take()</code> can be called 6 times in a row
+        without calling <code>Give()</code>:
+        three times by the first importer of the module and
+        thre times by the second importer of the module
+        (which got a second copy of the variables and functions).
+        This makes a very confusing bug for the user.
     </p>
     <h1>Module Import Recursion</h1>
     <p>
@@ -128,12 +159,27 @@
         Your intuitive answer may vary depending on whether you are accustomed
         to a Windows (case-insensitive filesystem) or *nix (case-sensitive filesystem) environment.
         Are "mymodule.mjs" and "./mymodule.mjs" specifiers that
-        all refer to the same module?
+        both refer to the same module?
         They will be if you are mapping specifiers directly onto a typical filesystem,
         which means your code has to notice that they both refer to the same module
         and not accidentally load another copy.
         Note that a module might contain some state crucial to its operation,
-        and creating two copies may result in a mystifying bug at the JavaScript level.
+        so creating two copies may result in a mystifying bug at the JavaScript level.
+    </p>
+    <p>
+        Note that if you support something like relative paths in your specifiers,
+        you will need to answer the question <q>relative to what?</q>
+        The correct answer is usually <q>relative to the location of the module that imported this one.</q>
+        At the moment V8 asks your code to create a Module from a specifier,
+        it will pass the Module corresponding to the module whose import/export statement
+        caused the request to create this new module.
+        Alas, the V8 Module object does not give you access to the specifier
+        that was used to load it.
+        In other words, the "parent" Module won't tell you what "current path"
+        you should use when resolving a relative path specifier in the "child" Module
+        you're trying to load and create.
+        Might as well resign yourself to having to do the work of associating
+        your own custom data with each Module.
     </p>
     <p>
         There are slightly different rules for modules and the more traditional
@@ -149,14 +195,88 @@
         I load for V8 to compile is going to be a module.
         Let's be modern and cool!
     </p>
+    <h1>Phases: Compile/Instantiate/Evaluate</h1>
+    <p>
+        The version of the ECMAScript specification I use here
+        <a href="https://www.ecma-international.org/ecma-262/#sec-cyclic-module-records">describes</a>
+        modules going through multiple phases
+        (or taking on multiple states, if you like)
+        in the process from loading the module to having it ready to use.
+        The states of a module's lifetime are listed (in order) as:
+        <ul>
+            <li>uninstantiated</li>
+            <li>instantiated</li>
+            <li>evaluating</li>
+            <li>evaluated</li>
+        </ul>
+        This gives you an idea of the steps you're going to be taking to
+        handle modules in your host environment.
+    </p>
+    <p>
+        A module is initially in the <q>uninstantiated</q> state,
+        but for the module to be in any state at all, it first has to
+        exist in some sense. When does a module first come into existence?
+        We don't really know anything about a module
+        (other than having a specifer string that refers to it)
+        until V8 compiles it.
+        That step not only creates the V8 Module object
+        (in the <q>uninstantiated</q> state),
+        but also establishes
+        (when it parses any/all of the import/export statements therein)
+        the list of all the other modules this module requires.
+        So compilation is one of the first things your host environment
+        must accomplish when a module is needed.
+    </p>
+    <p>
+        As mentioned earilier, there are modest language differences between a script and a module.
+        That manifests in the V8 API with two different functions you can call to compile a
+        string containing JavaScript:
+        ScriptCompiler::Compile() and ScriptCompiler::CompileModule().
+        Obviously the latter is the one you'll use to compile a module,
+        and it returns a Module object
+        (more specifically, a <code>MaybeLocal&lt;Module&gt;</code>).
+    </p>
+    <p>
+        Next comes instantiation, and if you're not sure what that is,
+        I kinda doubt it has any widely-accepted narrow definition.
+        <a href="https://hacks.mozilla.org/2018/03/es-modules-a-cartoon-deep-dive/">Lin Clark's piece</a>
+        says
+        <blockquote>
+            find boxes in memory to place all of the exported values in
+            (but don’t fill them in with values yet).
+            Then make both exports and imports point to those boxes in memory.
+            This is called linking.
+        </blockquote>
+        Sounds good to me.
+        OTOH, it looks like a future version of the language spec
+        <a href="https://tc39.es/ecma262/#table-37">stopped saying "instantiating" and just says "linking" instead.</a>
+        In any case, 
+    </p>
+    <p>
+        In V8 terms, you get yourself a Module
+        (I trust you to know I mean "handle to")
+        by compiling a string with source code,
+        then you will use Module->Instantiate() to
+        do whatever the heck instantiation means.
+        
+    </p>
     <h1>Module Unload</h1>
     <p>
         AFAIK, the language specification includes no notion of removing
-        a module from memory after it has been imported. Unloading was
+        a module from memory after it has been imported
+        (at some point when you presumably believe you have no further use for it).
+        Unloading was
         a feature possible with Node's neo-module mechanism, "require."
         One might want such a thing for testing frameworks, and also
         during development when changed modules can be automatically detected
         and reloaded without having to shutdown and restart.
+        Unloading is presumably a less vital topic on the web browser side,
+        where pages (and the V8 contexts behind them) are constantly
+        be discarded anyway.
+        On the server side,
+        where one might hope one's V8 code runs a quite long time without restarting,
+        continually accumulating bits of infrequently used code that take up
+        space forever after becomes more annoying.
     </p>
     <p>
         Currently (spring 2020) this seems to be an
@@ -172,7 +292,18 @@
         That's a much larger granularity than just unloading a single
         module, of course, but also a much more tested scenario than
         any per-module unloading hack you might devise for the current V8.
+        It's like the difference between safely
+        terminating/restarting an arbitrary C++ thread
+        (good luck with that)
+        and safely terminating/restarting an arbitrary C++ process
+        (if that's not safe, your operating system has a serious bug).
+        If V8 can't safely terminate/restart a context/isolate,
+        then Google's Chrome browser is probably in trouble.
     </p>
+    <h1>Dynamic Import</h1>
+    <p>
+        test.
+        </p>
 </body>
 </Xml>
 

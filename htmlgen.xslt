@@ -377,6 +377,7 @@ blockquote p {
                         select="document(@input)/Xml/head/title/node()"/>
                 </header><xsl:text>&#10;</xsl:text>
                 <aside class="sidenav"><xsl:text>&#10;</xsl:text>
+                <noscript><b>JavaScript disabled, menu in uncool mode</b></noscript>
                 <ul id="menutree">
                     <xsl:apply-templates select="exsl:node-set($MasterIndex)/Index" mode="GenNav">
                         <xsl:with-param name="This" select="."/>

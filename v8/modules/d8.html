@@ -180,7 +180,7 @@ blockquote p {
 <body>
 <div class="grid-container">
 <header class="header">
-        Modules
+        How d8 Loads Modules
     </header>
 <aside class="sidenav">
 <noscript><b>JavaScript disabled, menu in uncool mode</b></noscript>
@@ -214,48 +214,17 @@ blockquote p {
 </li></ul>
 </aside>
 <main class="main"><p>
-        Like most simple languages that evolve to support larger and more complex programs,
-        JavaScript has struggled with an ever-increasing need for features
-        to support modularity.
-        Various product-specific precursors like
-        <a href="https://nodejs.org/">Node</a>'s
-        "<a href="https://nodejs.org/en/knowledge/getting-started/what-is-require/">require</a>"
-        mechanism became formalized in the ECMAScript standard as
-        "<a href="https://www.ecma-international.org/ecma-262/#sec-modules">modules</a>".
     </p>
-<p>
-        To be generally embeddable, V8 has to support ECMAScript modules,
-        but give the embedder (the "host environment") the ability to customize such tasks
-        as loading the text of modules to be compiled.
-        Keep in mind what the language
-        <a href="https://www.ecma-international.org/ecma-262/#sec-overview">specification says</a>:
-        <blockquote>
-            there are no provisions in this specification for input of external data or output of computed results.
-        </blockquote>
-        Like nearly everything that is not a pure execution of Javascript computation,
-        such things are left to the host environment which,
-        if you are writing C++ that calls V8,
-        means <em>you</em> are responsible for writing that code.
-    </p>
-<p><a href="/v8/modules/spec-says.html">
-        Language Specification Says...
-    </a></p>
-<p><a href="/v8/modules/d8.html">
-        How d8 Loads Modules
-    </a></p>
 </main>
-<footer class="footer"><div>NEXT: <a href="/v8/modules/spec-says.html">
-        Language Specification Says...
-    </a>
-</div>
+<footer class="footer"><div></div>
 <div>
             UP:
-            <a href="/v8/index.html">
-        Stumbling Around V8
+            <a href="/v8/modules/index.html">
+        Modules
     </a>
 </div>
-<div>PREV: <a href="/v8/building.html">
-        Building the Damn Thing
+<div>PREV: <a href="/v8/modules/spec-says.html">
+        Language Specification Says...
     </a>
 </div></footer>
 </div>
