@@ -302,9 +302,12 @@ blockquote p {
         You can see that it is intended that
         <code>Take()</code> cannot be called more than 3 times in a row without
         calling <code>Give()</code>.
-        But (assuming the same context/realm) if the JavaScript compiler later
-        runs into another import statement that refers to <q>mymodule.js</q>,
-        your code is going to have to notice that you already loaded that module
+        But (assuming the same context/realm)
+        if the JavaScript compiler later
+        runs into another import statement that refers to
+        <q>mymodule.js</q>,
+        your code is going to have to notice that you
+        already loaded that module
         and it should not get executed again.
         If you load this module a second time when it is imported by
         some other code,
@@ -315,43 +318,25 @@ blockquote p {
         (which got a second copy of the variables and functions).
         This makes a very confusing bug for the user.
     </p>
-<h1>Module Import Recursion</h1>
-<p>
-        If you make a graph with JavaScript modules as nodes and
-        viewing their contained import statements as "arrows"
-        pointing at other nodes,
-        you can end up with cycles in your graph.
-        A simple example is you import "a.js" which itself
-        imports "b.js", which in turn happens to be
-        importing some functions from "a.js".
-        This is another reason you will be writing code that detects
-        when a module has already been loaded.
-    </p>
-<p>
-        The first time JavaScript encounters an "import" statement,
-        that could lead to a pretty long list of modules to import.
-        In other words, the first module may import from other modules
-        that in turn import from still other modules.
-        This is most naturally defined as a recursive process that
-        stops recursing when it hits modules that import no
-        modules that have not already been loaded.
-        However, just to be contrary, I will implement a non-recursive
-        module load.
-    </p>
 <h1>Specifiers and Ambiguity</h1>
 <p>
         As mentioned before, the ECMAScript specification is insulated
-        from the outside world of files, URLs, etc. Those are your responsibility
+        from the outside world of files, URLs, etc.
+        Those are your responsibility
         as the coder providing the host environment for V8.
         An import statement refers to a module via a string,
         which the
         <a href="https://www.ecma-international.org/ecma-262/#sec-hostresolveimportedmodule">specification calls a "specifier"</a>.
         You will have to write code that, given one of those strings,
-        brings the associated module text into memory and hands it to V8.
-        That could be as simple as reading a file, or you might need to also
-        be able to fetch URLs from across the web, or any other mechanism
+        brings the associated module text into memory
+        and hands it to V8.
+        That could be as simple as reading a file,
+        or you might need to also
+        be able to fetch URLs from across the web,
+        or any other mechanism
         for storing the text of modules.
-        For example, my particular application allows JavaScript no unfettered
+        For example, my particular application allows
+        JavaScript no unfettered
         access to either a filesystem or the web,
         and I will be translating the "specifier" string into
         a database request, since all my module source code will be

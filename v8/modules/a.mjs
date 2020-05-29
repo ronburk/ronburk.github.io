@@ -1,4 +1,5 @@
 /* module a */
 import {b} from "b.mjs";
-
-export let aval = b(45);
+let   x = b();
+export function a() { return "a"; }
+console.log(x);

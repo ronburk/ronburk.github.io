@@ -1,3 +1,6 @@
 /* module b */
-import {aval} from "a.mjs";
-export function b(num) { return aval + 1; }
+import {a} from "a.mjs";
+let y = a();
+let z = "oh-oh";
+export function b() { return z + "b"; }
+console.log(y);
