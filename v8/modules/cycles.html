@@ -180,7 +180,7 @@ blockquote p {
 <body>
 <div class="grid-container">
 <header class="header">
-        V8: Single- and Multi-Threaded
+        Module Cycles
     </header>
 <aside class="sidenav">
 <noscript><b>JavaScript disabled, menu in uncool mode</b></noscript>
@@ -197,7 +197,7 @@ blockquote p {
         Building the Damn Thing
     </a></li>
         <li class="collapse">
-<input type="checkbox" id="idp3"><label for="idp3"></label><a href="/v8/modules/index.html">
+<input type="checkbox" id="idp3" class="open-on-load"><label for="idp3"></label><a href="/v8/modules/index.html">
         Modules
     </a><ul>
             <li><a href="/v8/modules/spec-says.html">
@@ -216,73 +216,90 @@ blockquote p {
 </ul>
 </li></ul>
 </aside>
-<main class="main"><p>
-        I like to avoid threads, so I naively hoped that
-        V8 did not require them.
-        But V8 does require threads
-        (uses
-        <a href="http://man7.org/linux/man-pages/man7/pthreads.7.html">pthreads</a>
-        to be specific),
-        so your V8 application will be multi-threaded.
-        You get some control over how many "extra" threads are started,
-        but it can't be zeo.
-        See <a href="https://stackoverflow.com/questions/56118604/wanting-to-understand-purpose-and-count-of-v8s-workerthreads">Wanting to understand purpose and count of V8's WorkerThread(s)</a>.
+<main class="main"><h1>Module Cycles</h1>
+<p>
+        If you make a graph with JavaScript modules as nodes and
+        viewing their contained import statements as "arrows"
+        pointing at other nodes,
+        you can end up with cycles in your graph.
+        A simple example is you import "a.js" which itself
+        imports "b.js", which in turn happens to be
+        importing some functions from "a.js".
+        This is another reason you will be writing code that detects
+        when a module has already been loaded.
     </p>
 <p>
-        To be clear,
-        <a href="https://www.ecma-international.org/ecma-262/5.1/">ECMAScript</a> is implicitly single-threaded,
-        so V8's implementation of that language
-        is likely to always be as well.
-        IOW (caveats to follow),
-        your JavaScript code is always executing a single thread of control
-        and doesn't have to worry about synchronizing access any of its data,
-        no matter how much it <em>feels</em> like dozens of snippets of
-        your code are working on dozens of (e.g., HTTP) requests <q>at the same time.</q>
-        As <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop">this overview</a> implies,
-        combining a single-threaded interpreted language
-        with the ability to hand off I/O bound tasks to the external
-        environment is a good compromise.
-        The vague idea that JavaScript is "missing" threads is
-        misplaced.
-        If JavaScript had threads, node.js would never have
-        gotten off the ground.
-        Protecting the masses of programmers from multi-threading
-        is even more important than protecting them from memory management.
-        As Gordon Bell warns,
-        <a href="https://tinyurl.com/BellOnThreads">Parallelism is more difficult to implement than
-        anyone imagines</a>.
+        <a href="https://exploringjs.com/impatient-js/ch_modules.html#esms-transparent-support-for-cyclic-imports-advanced">JavaScript for impatient programmers says the language</a>
+        <blockquote>
+            supports cyclic imports transparently.
+        </blockquote>
+        and also:
+        <blockquote>
+            handles cyclic imports correctly.
+        </blockquote>
+        I feel dubious because I'm pretty sure I can
+        construct a mutual dependence between modules
+        that has no correct meaning
+        (but maybe I just have
+        <a href="https://en.wikipedia.org/wiki/Entscheidungsproblem">Entscheidungsproblem</a>
+        on the brain).
     </p>
 <p>
-        Of course, since V8 lets you run multiple JavaScript
-        engines in the same process,
-        you are always free to have more than one
-        single-threaded JavaScript environment operating at
-        the same time.
-        You have to arrange for them to communicate, however,
-        if they are sharing the work,
-        just like a web browser has to use a clunky
-        message-posting mechanism to make
-        <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers" title="Web Workers API">"web workers"</a>
-        (background JavaScript "threads") actually work.
+        To see what I mean, here's "a.mjs":
+        <pre><code>
+            /* module a */
+            import {b} from "b.mjs";
+
+            export let aval = b(45);
+        </code></pre>
+        and here's "b.mjs":
+        <pre><code>
+            /* module b */
+            import {aval} from "a.mjs";
+            export function b(num) { return aval + 1; }
+        </code></pre>
+        Remember that part of making a module ready to use
+        is "evaluating" it (executing its code).
+        Evaluating "a.mjs" requires calling function
+        <code>b()</code> from "b.mjs".
+        Now, a smart human could look at this and say
+        <q>hey, this can work if you evaluate "b.mjs" first!</q>
+        See, evaluating "a.mjs" absolutely requires executing a
+        call to <code>b(45)</code>,
+        and we don't get to execute code from module "b.mjs"
+        until that module has been evaulated.
+        So clearly we can't evaluate "a.mjs" first.
+        What if we evaluate "b.mjs" first?
+        In this case, 
     </p>
 <p>
-        The V8 library includes
-        <a href="https://github.com/v8/v8/blob/master/src/libplatform/worker-thread.cc">mild support</a>
-        for this.
-        But I haven't studied it, so may be deeply confused.
+        The first time JavaScript encounters an "import" statement,
+        that could lead to a pretty long list of modules to import.
+        In other words, the first module may import from other modules
+        that in turn import from still other modules.
+        This is most naturally defined as a recursive process that
+        stops recursing when it hits modules that import no
+        modules that have not already been loaded.
+        However, just to be contrary, I will implement a non-recursive
+        module load.
+    </p>
+<p>
     </p>
 </main>
-<footer class="footer"><div>NEXT: <a href="/v8/building.html">
-        Building the Damn Thing
+<footer class="footer"><div>NEXT: <a href="/v8/modules/d8.html">
+        How d8 Loads Modules
     </a>
 </div>
 <div>
             UP:
-            <a href="/v8/index.html">
-        Stumbling Around V8
+            <a href="/v8/modules/index.html">
+        Modules
     </a>
 </div>
-<div></div></footer>
+<div>PREV: <a href="/v8/modules/spec-says.html">
+            Language Specification Says...
+        </a>
+</div></footer>
 </div>
 </body>
 </html>
