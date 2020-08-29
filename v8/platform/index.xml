@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<Xml>
+<head>
+    <title>
+        Platform - interface embedders must supply.
+    </title>
+</head>
+<body>
+    <p>
+        I found the whole <q>platform</q> thing a reliable source
+        of confusion.
+        Here, I try to sort out what I think I understand.
+    </p>
+    <p>
+        In addition to the quite large surface of engine internals
+        V8 exposes in <code>v8.h</code>,
+        the V8 <q>platform</q> seems to be a small potpourri
+        of abstract interfaces.
+    </p>
+    <p>
+        <code>v8.h</code> forward-references a class named
+        <code>Platform</code> but does not define it.
+        Instead, <code>class Platform</code> is defined
+        in <code>v8/include/v8-platform.h</code>.
+        If you want to define your own <q>platform</q> class
+        instead of using one that Google offers,
+        that's the header file you'll need to include.
+        Beware: in 2020, there's still code churn going on
+        in the platform interface.
+        Probably mostly related to scheduling execution of things,
+        as background execution of JavaScript in web browsers migrates
+        into the standard.
+    </p>
+    <p>
+        Note that although V8 kinda/sorta tries to hold the whole
+        platform thing at arms length from the rest of the code,
+        supplying some implementation of the abstract
+        <code>class Platform</code> is required.
+        You're supposed to pass a pointer to a <code>Platform</code>
+        to <code>v8::InitializePlatform()</code> before
+        initializing V8.
+    </p>
+    <p>
+        
+    </p>
+</body>
+</Xml>
+

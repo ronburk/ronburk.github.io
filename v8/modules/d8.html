@@ -217,6 +217,60 @@ blockquote p {
 </li></ul>
 </aside>
 <main class="main"><p>
+        Let's look at how d8 loads modules, with as many extraneous
+        details left out as possible (treat this more like pseudo-code than real code).
+        The action begins in <code>Shell::ExecuteModule()</code>,
+        which gets called with the <q>name</q> of a module.
+    </p>
+<p>
+        Remember that the <q>name</q> of a module is a fairly arbitrary
+        string that was supplied to an <code>import</code> statement.
+        As the V8 embedder, you <del>will have</del>
+        get to write code that takes that
+        string and goes and get the actual text of the module for V8 to compile.
+    </p>
+<p>
+        Also remember that the module must be herded along through
+        various states before it is ready to be used by other JavaScript code.
+        The state is maintained inside a <code>v8::Module</code>
+        object for you,
+        and is available (in the unlikely event you need it)
+        by calling <code>v8::Module::GetStatus()</code>.
+        Here are the actual states from today's v8.h:
+            <ul>
+                <li>
+                    <b>kUninstantiated</b> -
+                    You've created a <code>v8::Module</code>
+                    record for the module, but that's all.
+                </li>
+                <li>
+                    <b>kInstantiating</b> -
+                    You're in the middle of a call to (e.g.)
+                    <code>v8::ScriptCompiler::CompileModule()</code>
+                    to compile the module.
+                </li>
+                <li>
+                    <b>kInstantiated</b> -
+                    You've compiled the source code for the module, so now the
+                    <code>v8::Module</code> object contains the names
+                    of all the other modules that this code
+                    has referenced via <code>import</code> statements.
+                </li>
+                <li>
+                    <b>kEvaluating</b> -
+                    You're in the middle of <q>evaluating</q>
+                    (executing the outermost code of) the module by
+                    calling V8's 
+                </li>
+                <li>
+                    <b>kEvaluated</b> -
+                    You've successfully  run <code>v8::Module::Evaluate</code>
+                    on this <code>v8::Module</code> object.
+                </li>
+            </ul>
+    </p>
+<p>
+        
     </p>
 </main>
 <footer class="footer"><div></div>

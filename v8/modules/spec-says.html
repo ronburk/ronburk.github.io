@@ -280,28 +280,31 @@ blockquote p {
             executed no more than once for any given realm/context.
             To be explicit, consider a dummy module:
             <pre><code>
-                // mymodule.js
-                let MAX   = 3;
-                let count = 0;
-                function Take() {
-                if(++count &gt; MAX)
-                throw "You've taken too much!";
-                else
-                return count;
-                }
-                function Give() {
-                if(--count &lt; 0)
-                throw "You've given too much!";
-                else
-                return count;
-                }
-                export Take, Give
+// mymodule.js
+let MAX   = 3;
+let count = 0;
+function Take() {
+    if(++count &gt; MAX)
+        throw "You've taken too much!";
+    else
+        return count;
+    }
+function Give() {
+    if(--count &lt; 0)
+        throw "You've given too much!";
+    else
+        return count;
+    }
+export Take, Give
             </code></pre>
             When this module gets executed
-            (e.g., because some other code references <q>mymodule.js</q> with an <code>import</code> statement),
+            (e.g., because some other code references <q>mymodule.js</q> with
+            an <code>import</code> statement),
             it creates and intializes two variables and two functions.
             Those two functions are then available to be called from code outside
             this module.
+        </p>
+<p>
             You can see that it is intended that
             <code>Take()</code> cannot be called more than 3 times in a row without
             calling <code>Give()</code>.
